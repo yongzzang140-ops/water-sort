@@ -99,7 +99,7 @@ function setMode(m){
 }
 const $=id=>document.getElementById(id);
 const L={
-ko:{title:"물 붓기",who:"누가 하나요?",whoSub:"고른 모드에 맞춰 난이도와 화면이 바뀌어요. 나중에 언제든 바꿀 수 있어요.",kid:"🧒 아이",kidSub:"색이 적고 병이 커서 쉽워요",adult:"🧑 어른",adultSub:"색이 많아 생각할 거리가 있어요",sub:"병을 눌러 물을 옮겨서, 한 병에 한 가지 색만 남겨 보세요.",resume:"이어하기",resumeN:"이어하기 · {n}단계",toKid:"아이 모드로 바꾸기",toAdult:"어른 모드로 바꾸기",best:"최고 {n}회",todo:"미클리어",stage:"{n}단계",moves:"이동 {n}회",back:"목록",undo:"되돌리기",restart:"다시 시작",soundOn:"소리 켜기",soundOff:"소리 끄기",clear:"클리어!",kidClear:"와, 해냈어요!",kidMsg:"참 잘했어요! ⭐⭐⭐",solved:"{n}회 만에 풀었어요.",keep:" 최고 기록은 {p}회예요.",newBest:" 새 최고 기록이에요!",next:"다음 단계",tube:"{n}번 병"},
+ko:{title:"물 붓기",who:"누가 하나요?",whoSub:"고른 모드에 맞춰 난이도와 화면이 바뀌어요. 나중에 언제든 바꿀 수 있어요.",kid:"🧒 아이",kidSub:"색이 적고 병이 커서 쉬워요",adult:"🧑 어른",adultSub:"색이 많아 생각할 거리가 있어요",sub:"병을 눌러 물을 옮겨서, 한 병에 한 가지 색만 남겨 보세요.",resume:"이어하기",resumeN:"이어하기 · {n}단계",toKid:"아이 모드로 바꾸기",toAdult:"어른 모드로 바꾸기",best:"최고 {n}회",todo:"미클리어",stage:"{n}단계",moves:"이동 {n}회",back:"목록",undo:"되돌리기",restart:"다시 시작",soundOn:"소리 켜기",soundOff:"소리 끄기",clear:"클리어!",kidClear:"와, 해냈어요!",kidMsg:"참 잘했어요! ⭐⭐⭐",solved:"{n}회 만에 풀었어요.",keep:" 최고 기록은 {p}회예요.",newBest:" 새 최고 기록이에요!",next:"다음 단계",tube:"{n}번 병"},
 ja:{title:"水そそぎ",who:"だれが遊びますか?",whoSub:"選んだモードに合わせて難しさと画面が変わります。あとからいつでも変えられます。",kid:"🧒 こども",kidSub:"色が少なくて、びんが大きいのでやさしいです",adult:"🧑 おとな",adultSub:"色が多くて、考えごたえがあります",sub:"びんをタップして水を移し、１本のびんに１色だけが残るようにしましょう。",resume:"つづきから",resumeN:"つづきから · ステージ{n}",toKid:"こどもモードに切り替え",toAdult:"おとなモードに切り替え",best:"ベスト {n}回",todo:"未クリア",stage:"ステージ {n}",moves:"移動 {n}回",back:"一覧",undo:"１つ戻す",restart:"やり直す",soundOn:"音をオン",soundOff:"音をオフ",clear:"クリア!",kidClear:"やったね!",kidMsg:"よくできました! ⭐⭐⭐",solved:"{n}回で解けました。",keep:" ベストは{p}回です。",newBest:" ベスト記録を更新しました!",next:"次のステージ",tube:"{n}番のびん"},
 en:{title:"Water Sort",who:"Who’s playing?",whoSub:"Difficulty and visuals change with the mode you pick. You can switch anytime.",kid:"🧒 Kid",kidSub:"Fewer colors and bigger bottles, so it’s easier",adult:"🧑 Adult",adultSub:"More colors, more to think about",sub:"Tap bottles to pour, until each bottle holds just one color.",resume:"Continue",resumeN:"Continue · Stage {n}",toKid:"Switch to Kid mode",toAdult:"Switch to Adult mode",best:"Best {n}",todo:"Not cleared",stage:"Stage {n}",moves:"Moves {n}",back:"Stages",undo:"Undo",restart:"Restart",soundOn:"Sound on",soundOff:"Sound off",clear:"Cleared!",kidClear:"You did it!",kidMsg:"Great job! ⭐⭐⭐",solved:"Solved in {n} moves.",keep:" Your best is {p}.",newBest:" New best!",next:"Next stage",tube:"Bottle {n}"}
 };
@@ -137,13 +137,42 @@ function snd(type){
 }
 
 function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+function solvable(T){
+  const seen=new Set();let nodes=0;
+  const key=s=>s.map(x=>x.join(",")).sort().join("|");
+  function dfs(s){
+    if(s.every(x=>x.length===0||(x.length===CAP&&x.every(v=>v===x[0]))))return true;
+    const k=key(s);if(seen.has(k))return false;seen.add(k);
+    if(++nodes>8000)return false;
+    for(let a=0;a<s.length;a++){
+      const A=s[a];if(!A.length)continue;
+      const col=A[A.length-1],pure=A.every(v=>v===col);
+      if(pure&&A.length===CAP)continue;
+      for(let b=0;b<s.length;b++){
+        const B=s[b];if(a===b||B.length>=CAP)continue;
+        if(B.length?B[B.length-1]!==col:pure)continue;
+        const ns=s.map(x=>x.slice());
+        while(ns[a].length&&ns[a][ns[a].length-1]===col&&ns[b].length<CAP)ns[b].push(ns[a].pop());
+        if(dfs(ns))return true;
+      }
+    }
+    return false;
+  }
+  return dfs(T.map(x=>x.slice()));
+}
 function gen(n){
   const kid=S.mode==="kid";
-  const r=rng(n*7919+13+(kid?5:0)), c=kid?(n<=12?2+Math.floor((n-1)/3):Math.min(6+Math.floor((n-13)/6),8)):(n<=12?3+Math.floor((n-1)/2):Math.min(9+Math.floor((n-13)/6),11)), segs=[];
+  const c=kid?(n<=12?2+Math.floor((n-1)/3):Math.min(6+Math.floor((n-13)/6),8)):(n<=12?3+Math.floor((n-1)/2):Math.min(9+Math.floor((n-13)/6),11)), empt=(!kid&&n>=19)?1:2;
+  let tb;
+  for(let at=0;at<25;at++){
+  const r=rng(n*7919+13+(kid?5:0)+at*104729), segs=[];
   for(let i=0;i<c;i++)for(let j=0;j<CAP;j++)segs.push(i);
   for(let i=segs.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]];}
   const t=[];for(let i=0;i<c;i++)t.push(segs.slice(i*CAP,i*CAP+CAP));
-  t.push([],[]);return t;
+  for(let e=0;e<empt;e++)t.push([]);
+  tb=t;if(empt===2||solvable(t))return t;
+  }
+  tb.push([]);return tb;
 }
 function showHome(){
   $("game").hidden=true;$("win").classList.remove("on");
@@ -173,10 +202,10 @@ function render(){
   const c=S.cur;
   $("title").textContent=t("stage",{n:c.level});$("moves").textContent=t("moves",{n:c.moves});
   const w=$("tubes");w.innerHTML="";const lm=lastMove;lastMove=null;
-  c.tubes.forEach((t,i)=>{
+  c.tubes.forEach((tb,i)=>{
     const d=document.createElement("div");d.className="tube"+(sel===i?" sel":"")+(lm&&lm.from===i?" from":"");
     d.tabIndex=0;d.setAttribute("role","button");d.setAttribute("aria-label",t("tube",{n:i+1}));
-    t.forEach((v,k)=>{const s=document.createElement("div");s.className="seg"+(lm&&lm.to===i&&k>=t.length-lm.n?" new":"");s.style.background=COLORS[v];d.appendChild(s);});
+    tb.forEach((v,k)=>{const s=document.createElement("div");s.className="seg"+(lm&&lm.to===i&&k>=tb.length-lm.n?" new":"");s.style.background=COLORS[v];d.appendChild(s);});
     d.onclick=()=>tap(i);
     d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tap(i);}};
     w.appendChild(d);
