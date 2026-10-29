@@ -55,6 +55,24 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes tip{0%{transform:rotate(0)}40%{transform:rotate(-16deg) translateY(-10px)}100%{transform:rotate(0)}}
 .seg.new{animation:fill .35s ease-out}
 .seg.q{background:#7b8a92;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.animals{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.an{font-size:44px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 0}
+.an:focus-visible,.node:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.map{display:grid;grid-template-columns:repeat(5,1fr);margin-top:12px}
+.c{position:relative;height:66px;display:flex;align-items:center;justify-content:center}
+.c::before{content:"";position:absolute;background:var(--line);z-index:0}
+.c.r::before{left:50%;right:-50%;top:calc(50% - 3px);height:6px}
+.c.l::before{left:-50%;right:50%;top:calc(50% - 3px);height:6px}
+.c.d::before{top:50%;bottom:-50%;left:calc(50% - 3px);width:6px}
+.c.dn::before{background:var(--accent)}
+.node{position:relative;z-index:1;width:52px;height:52px;border-radius:50%;border:3px solid var(--line);background:var(--card);font-size:22px;font-weight:700;padding:0}
+.node.done{border-color:var(--accent)}
+.node.cur{border-color:#f5a524;background:#fff3cf;animation:hop 1s ease-in-out infinite alternate}
+.node:disabled{opacity:.5;cursor:default}
+@keyframes hop{to{transform:translateY(-6px)}}
+.pet{font-size:64px;line-height:1.2;animation:dance .8s ease-in-out infinite alternate}
+@keyframes dance{from{transform:rotate(-8deg)}to{transform:rotate(8deg) scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.node.cur,.pet{animation:none}}
 .tube.from{animation:tip .4s ease-in-out}
 @media (prefers-reduced-motion:reduce){.seg.new,.tube.from{animation:none}}
 @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -66,6 +84,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <body>
 <main>
 <div class="lang" id="lang"></div>
+<section id="pick" hidden><h1></h1><p class="sub"></p><div class="animals" id="animals"></div></section>
 <section id="mode" hidden>
   <h1>누가 하나요?</h1>
   <p class="sub">고른 모드에 맞춰 난이도와 화면이 바뀌어요. 나중에 언제든 바꿀 수 있어요.</p>
@@ -86,7 +105,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="actions"><button class="btn ghost" id="undo">되돌리기</button><button class="btn ghost" id="mute"></button><button class="btn ghost" id="restart">다시 시작</button></div>
 </section>
 </main>
-<div class="overlay" id="win"><div class="modal"><h2 id="wintitle">클리어!</h2><p id="winmsg"></p><button class="btn" id="next">다음 단계</button><button class="btn ghost" id="tolist">목록</button></div></div>
+<div class="overlay" id="win"><div class="modal"><div id="winpet" class="pet"></div><h2 id="wintitle">클리어!</h2><p id="winmsg"></p><button class="btn" id="next">다음 단계</button><button class="btn ghost" id="tolist">목록</button></div></div>
 <script>
 const COLORS=["#e5484d","#f5a524","#f2d94e","#46a758","#12a594","#3e63dd","#8e4ec6","#e93d82","#8b8d98","#7dd3fc","#8a5a33"];
 const TOTAL=30, CAP=4, KEY="waterSort.v1";
@@ -106,6 +125,9 @@ ja:{title:"水そそぎ",who:"だれが遊びますか?",whoSub:"選んだモー
 en:{title:"Water Sort",who:"Who’s playing?",whoSub:"Difficulty and visuals change with the mode you pick. You can switch anytime.",kid:"🧒 Kid",kidSub:"Fewer colors and bigger bottles, so it’s easier",adult:"🧑 Adult",adultSub:"More colors, more to think about",sub:"Tap bottles to pour, until each bottle holds just one color.",resume:"Continue",resumeN:"Continue · Stage {n}",toKid:"Switch to Kid mode",toAdult:"Switch to Adult mode",best:"Best {n}",todo:"Not cleared",stage:"Stage {n}",moves:"Moves {n}",back:"Stages",undo:"Undo",restart:"Restart",soundOn:"Sound on",soundOff:"Sound off",clear:"Cleared!",kidClear:"You did it!",kidMsg:"Great job! ⭐⭐⭐",solved:"Solved in {n} moves.",keep:" Your best is {p}.",newBest:" New best!",next:"Next stage",tube:"Bottle {n}"}
 };
 L.ko.note="?로 가려진 칸은 위를 비워야 색이 드러나요.";L.ja.note="「?」のところは、上を空にすると色が見えます。";L.en.note="Tiles marked ? show their color once you clear what’s above.";
+L.ko.pick="좋아하는 동물을 골라요";L.ko.pickSub="이 친구가 함께 달려요!";L.ko.fin="끝까지 해냈어요! 🏁";
+L.ja.pick="すきなどうぶつをえらんでね";L.ja.pickSub="このこといっしょにすすもう!";L.ja.fin="ゴールおめでとう! 🏁";
+L.en.pick="Pick your favorite animal";L.en.pickSub="This buddy will join you on the way!";L.en.fin="You reached the goal! 🏁";
 function detect(){const l=(navigator.language||"en").slice(0,2);return L[l]?l:"en";}
 if(!S.lang)S.lang=detect();
 function t(k,v){let s=(L[S.lang]||L.en)[k];if(v)for(const x in v)s=s.replace("{"+x+"}",v[x]);return s;}
@@ -120,9 +142,11 @@ function applyLang(){
   $("home").querySelector(".sub").textContent=t("sub");
   $("back").textContent=t("back");$("undo").textContent=t("undo");$("restart").textContent=t("restart");
   $("next").textContent=t("next");$("tolist").textContent=t("back");
+  $("pick").querySelector("h1").textContent=t("pick");$("pick").querySelector(".sub").textContent=t("pickSub");
   setMute();
   const lg=$("lang");lg.innerHTML="";
   [["ko","한국어"],["ja","日本語"],["en","English"]].forEach(([c,n])=>{const b=document.createElement("button");b.textContent=n;b.className=c===S.lang?"on":"";b.onclick=()=>{S.lang=c;save();applyLang();refresh();};lg.appendChild(b);});
+  if(S.animal){const a=document.createElement("button");a.textContent=S.animal;a.setAttribute("aria-label","animal");a.onclick=()=>{$("home").hidden=true;$("mode").hidden=true;$("game").hidden=true;$("pick").hidden=false;};lg.appendChild(a);}
 }
 let sel=null,lastMove=null,AC=null;
 function snd(type){
@@ -163,29 +187,31 @@ function solvable(T){
   }
   return dfs(T.map(x=>x.slice()))?nodes:-1;
 }
-function gen(n){
+function gen(n,sd){
   const kid=S.mode==="kid";
-  const c=kid?(n<=12?2+Math.floor((n-1)/3):Math.min(6+Math.floor((n-13)/6),8)):(n<=12?3+Math.floor((n-1)/2):Math.min(9+Math.floor((n-13)/6),11)), empt=2;
-  {const at=0;
-  const r=rng(n*7919+13+(kid?5:0)+at*104729), segs=[];
+  const c=kid?(n<=12?2+Math.floor((n-1)/3):Math.min(6+Math.floor((n-13)/6),8)):(n<=12?3+Math.floor((n-1)/2):Math.min(9+Math.floor((n-13)/3),11)), empt=2;
+  for(let at=0;at<8;at++){
+  const r=rng(sd+at*104729), segs=[];
   for(let i=0;i<c;i++)for(let j=0;j<CAP;j++)segs.push(i);
   for(let i=segs.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]];}
   const t=[];for(let i=0;i<c;i++)t.push(segs.slice(i*CAP,i*CAP+CAP));
   for(let e=0;e<empt;e++)t.push([]);
-  const m=kid?0:Math.max(0,Math.min(c,Math.floor((n-2)/2)-1));
+  const m=kid?0:Math.max(0,Math.min(c,Math.floor(n/2)-1));
   const h=t.map((x,i)=>i<m?CAP-1:0);
-  return {t,h};
+  if(at===7||solvable(t)>=0)return {t,h};
   }
 }
 function showHome(){
   $("game").hidden=true;$("win").classList.remove("on");
+  $("pick").hidden=true;
+  if(!S.animal){$("home").hidden=true;$("mode").hidden=true;$("pick").hidden=false;return;}
   if(!S.mode){$("home").hidden=true;$("mode").hidden=false;return;}
   $("mode").hidden=true;$("home").hidden=false;
   document.body.classList.toggle("kid",S.mode==="kid");
   $("swmode").textContent=S.mode==="kid"?t("toAdult"):t("toKid");
   $("resume").hidden=!S.cur;
   $("resume").textContent=S.cur?t("resumeN",{n:S.cur.level}):t("resume");
-  const g=$("grid");g.innerHTML="";
+  const g=$("grid");g.innerHTML="";g.className=S.mode==="kid"?"map":"grid";if(S.mode==="kid"){renderMap(g);return;}
   for(let n=1;n<=TOTAL;n++){
     const b=document.createElement("button");b.className="stage";
     const done=S.cleared[n];
@@ -196,8 +222,23 @@ function showHome(){
     b.onclick=()=>start(n,true);g.appendChild(b);
   }
 }
+function renderMap(g){
+  let cur=1;while(cur<=TOTAL&&S.cleared[cur])cur++;
+  for(let i=0;i<TOTAL;i++){
+    const n=i+1,row=Math.floor(i/5),col=row%2?4-i%5:i%5;
+    const c=document.createElement("div");
+    c.className="c"+(n<TOTAL?(i%5<4?(row%2?" l":" r"):" d"):"")+(S.cleared[n]?" dn":"");
+    c.style.gridRow=row+1;c.style.gridColumn=col+1;
+    const b=document.createElement("button");
+    b.className="node"+(S.cleared[n]?" done":"")+(n===cur?" cur":"");
+    b.textContent=n===cur?S.animal:n===TOTAL?S.animal+"🏁":S.cleared[n]?"⭐":n;
+    b.disabled=n>cur;b.setAttribute("aria-label",t("stage",{n}));
+    b.onclick=()=>start(n,true);
+    c.appendChild(b);g.appendChild(c);
+  }
+}
 function start(n,fresh){
-  if(fresh||!S.cur||S.cur.level!==n){const g0=gen(n);S.cur={level:n,tubes:g0.t,hid:g0.h,moves:0,hist:[]};}
+  if(fresh||!S.cur||S.cur.level!==n){const g0=gen(n,Math.floor(Math.random()*1e9));const u=S.mode==="kid"||n<=8?null:n<=16?5:n<=24?3:1;S.cur={level:n,tubes:g0.t,hid:g0.h,moves:0,hist:[],u:u,u0:u,init:JSON.stringify([g0.t,g0.h])};}
   sel=null;save();
   $("home").hidden=true;$("game").hidden=false;render();
 }
@@ -206,6 +247,7 @@ function render(){
   $("title").textContent=t("stage",{n:c.level});$("moves").textContent=t("moves",{n:c.moves});
   const w=$("tubes");w.innerHTML="";const lm=lastMove;lastMove=null;
   $("note").textContent=(c.hid&&c.hid.some(x=>x>0))?t("note"):"";
+  $("undo").textContent=t("undo")+(c.u!=null?" ("+c.u+")":"");
   c.tubes.forEach((tb,i)=>{
     const d=document.createElement("div");d.className="tube"+(sel===i?" sel":"")+(lm&&lm.from===i?" from":"");
     d.tabIndex=0;d.setAttribute("role","button");d.setAttribute("aria-label",t("tube",{n:i+1}));
@@ -242,13 +284,13 @@ function win(){
   if(!prev||c.moves<prev)S.cleared[n]=c.moves;
   S.cur=null;save();
   const kid=S.mode==="kid";
-  $("wintitle").textContent=kid?t("kidClear"):t("clear");
+  $("wintitle").textContent=n>=TOTAL?t("fin"):kid?t("kidClear"):t("clear");$("winpet").textContent=kid?"✨"+S.animal+"🎉":"";
   $("winmsg").textContent=kid?t("kidMsg"):t("solved",{n:c.moves})+(prev&&prev<=c.moves?t("keep",{p:prev}):t("newBest"));
   $("next").hidden=n>=TOTAL;$("next").onclick=()=>{$("win").classList.remove("on");start(n+1,true);};
   setTimeout(()=>snd("win"),350);$("win").classList.add("on");
 }
-$("undo").onclick=()=>{const h=S.cur.hist;if(!h.length)return;{const p=JSON.parse(h.pop());const nf=Array.isArray(p[0])&&Array.isArray(p[0][0]);S.cur.tubes=nf?p[0]:p;if(nf)S.cur.hid=p[1];}snd("undo");S.cur.moves=Math.max(0,S.cur.moves-1);sel=null;save();render();};
-$("restart").onclick=()=>start(S.cur.level,true);
+$("undo").onclick=()=>{const h=S.cur.hist;if(!h.length||S.cur.u===0)return;if(S.cur.u>0)S.cur.u--;{const p=JSON.parse(h.pop());const nf=Array.isArray(p[0])&&Array.isArray(p[0][0]);S.cur.tubes=nf?p[0]:p;if(nf)S.cur.hid=p[1];}snd("undo");S.cur.moves=Math.max(0,S.cur.moves-1);sel=null;save();render();};
+$("restart").onclick=()=>{const c=S.cur;if(!c.init){start(c.level,true);return;}const p=JSON.parse(c.init);c.tubes=p[0];c.hid=p[1];c.moves=0;c.hist=[];c.u=c.u0;sel=null;save();render();};
 $("back").onclick=showHome;
 $("tolist").onclick=showHome;
 $("resume").onclick=()=>start(S.cur.level,false);
@@ -257,6 +299,7 @@ $("m-kid").onclick=()=>{setMode("kid");showHome();};
 $("m-adult").onclick=()=>{setMode("adult");showHome();};
 function setMute(){$("mute").textContent=S.mute?t("soundOn"):t("soundOff");}
 $("mute").onclick=()=>{S.mute=!S.mute;save();setMute();};
+["🐶","🐱","🐰","🐻","🐼","🦊","🐯","🐸"].forEach(a=>{const b=document.createElement("button");b.className="an";b.textContent=a;b.onclick=()=>{S.animal=a;save();applyLang();showHome();};$("animals").appendChild(b);});
 applyLang();
 showHome();
 </script>
