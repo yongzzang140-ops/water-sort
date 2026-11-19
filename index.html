@@ -3,19 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Water Sort - 물 붓기 퍼즐</title>
+<title>Water Sort - Ultimate Commercial Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+KR:wght@500;700;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #eef3f6;
-  --ink: #17323d;
-  --mute: #5d7580;
-  --card: #ffffff;
-  --line: #cfdce3;
-  --accent: #0f7c8f;
-  --glass: #f8fcfd;
-  --casual: #48bb78;
-  --pro: #4299e1;
-  --hell: #f56565;
+  --primary: #4F46E5;
+  --primary-light: #EEF2FF;
+  --bg-gradient: linear-gradient(180deg, #F0F4F8 0%, #E2E8F0 100%);
+  --surface: rgba(255, 255, 255, 0.95);
+  --surface-blur: blur(16px);
+  --ink: #1E293B;
+  --ink-secondary: #64748B;
+  --line: #E2E8F0;
+  
+  --casual: #10B981;
+  --casual-bg: #ECFDF5;
+  --pro: #3B82F6;
+  --pro-bg: #EFF6FF;
+  --hell: #EF4444;
+  --hell-bg: #FEF2F2;
+  --kid-color: #F59E0B;
+  --kid-bg: #FFFBEB;
+
+  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 16px -4px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --shadow-glass: inset 0 1px 2px rgba(255,255,255,0.8), 0 12px 24px -4px rgba(79, 70, 229, 0.08);
+
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -23,23 +39,22 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f1a20;
-    --ink: #e6f1f4;
-    --mute: #8fa8b2;
-    --card: #182830;
-    --line: #2a3f49;
-    --accent: #3cc0d6;
-    --glass: #1c313a;
-    color-scheme: dark;
+    --bg-gradient: linear-gradient(180deg, #0F172A 0%, #020617 100%);
+    --surface: rgba(30, 41, 59, 0.92);
+    --ink: #F8FAFC;
+    --ink-secondary: #94A3B8;
+    --line: #334155;
+    --shadow-glass: inset 0 1px 1px rgba(255,255,255,0.1), 0 12px 24px -4px rgba(0, 0, 0, 0.4);
   }
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
 html, body { min-height: 100%; }
 body {
-  background: var(--bg);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
   color: var(--ink);
-  font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+  font-family: "Plus Jakarta Sans", "Noto Sans KR", "Noto Sans JP", sans-serif;
   -webkit-tap-highlight-color: transparent;
   display: flex;
   flex-direction: column;
@@ -49,130 +64,374 @@ body {
 main {
   width: 100%;
   max-width: 480px;
-  padding: 16px 16px 28px;
+  padding: 16px 18px 30px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* 상단 언어 선택 바 */
-.top-nav {
+/* 상단 네비게이션 헤더 */
+.top-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  gap: 8px;
 }
 
-.lang-group {
-  display: flex;
-  gap: 5px;
-}
-
-.lang-btn {
+.back-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
   border: 1px solid var(--line);
-  background: var(--card);
   color: var(--ink);
-  border-radius: 999px;
-  padding: 5px 12px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.back-nav-btn:active { transform: scale(0.95); }
+
+.lang-segment {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 3px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+.lang-chip {
+  border: none;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-.lang-btn.on {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+.lang-chip.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.35);
 }
 
-.animal-avatar-btn {
-  border: 1px solid var(--line);
-  background: var(--card);
-  border-radius: 999px;
-  font-size: 18px;
-  padding: 3px 10px;
+.avatar-badge-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.avatar-badge-btn:active { transform: scale(0.92); }
+
+/* 상업용 헤더 타이틀 */
+.page-title-wrap {
+  margin: 10px 0 16px;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.page-desc {
+  font-size: 14px;
+  color: var(--ink-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
 }
 
-/* 공통 헤더 & 서브타이틀 */
-h1 { font-size: 26px; font-weight: 800; margin: 8px 0 4px; letter-spacing: -0.02em; }
-p.sub { margin: 0 0 16px; color: var(--mute); font-size: 14px; line-height: 1.45; }
+/* 상업용 3D 젤리 버튼 */
+button { font: inherit; }
+.btn-primary-3d {
+  background: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 6px 16px -2px rgba(79, 70, 229, 0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-primary-3d:active { transform: translateY(2px) scale(0.98); box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
 
-/* 공통 버튼 */
-button { font: inherit; color: inherit; cursor: pointer; }
-.btn {
-  border: 0;
-  background: var(--accent);
-  color: #fff;
+.btn-secondary-3d {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 18px;
   padding: 12px 18px;
-  border-radius: 14px;
+  font-size: 14px;
   font-weight: 700;
-  font-size: 15px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  transition: transform 0.15s ease;
-}
-.btn:active { transform: scale(0.97); }
-.btn.ghost { background: var(--card); color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
-.btn:disabled { opacity: 0.45; cursor: default; transform: none; }
-
-/* 모드 선택 카드 */
-.mode-section { margin-top: 8px; }
-.mode-card-big {
-  display: block;
-  width: 100%;
-  text-align: left;
-  background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 20px;
-  padding: 18px 20px;
-  margin: 12px 0;
-  cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 8px 20px -6px rgba(0,0,0,0.04);
 }
-.mode-card-big:hover { border-color: var(--accent); }
-.mode-card-big b { display: block; font-size: 20px; margin-bottom: 4px; }
-.mode-card-big small { color: var(--mute); font-size: 13px; line-height: 1.4; }
+.btn-secondary-3d:active { transform: scale(0.96); }
 
-/* 어른 모드 하위 3단계 난이도 라디오/버튼 그룹 */
-.adult-submodes {
+/* ==========================================================================
+   상업용 모드 선택 카드 (어린이 vs 어른: 일반/프로/헬)
+   ========================================================================== */
+.mode-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.commercial-mode-card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 24px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+.commercial-mode-card:hover {
+  border-color: var(--card-theme, var(--primary));
+  box-shadow: var(--shadow-lg);
+}
+.commercial-mode-card.selected {
+  border-color: var(--card-theme, var(--primary));
+  background: linear-gradient(180deg, var(--surface) 0%, var(--card-bg-tint, var(--surface)) 100%);
+  box-shadow: 0 14px 28px -6px rgba(0,0,0,0.1), inset 0 0 0 1px var(--card-theme, var(--primary));
+}
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.card-icon-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mode-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--card-bg-tint, var(--primary-light));
+  color: var(--card-theme, var(--primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.6);
+}
+.mode-heading-wrap h3 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.mode-stars {
+  font-size: 13px;
+  color: #F59E0B;
+  margin-top: 2px;
+}
+
+.selection-check {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: transparent;
+  background: var(--surface);
+  transition: all 0.2s ease;
+}
+.commercial-mode-card.selected .selection-check {
+  background: var(--card-theme, var(--primary));
+  border-color: var(--card-theme, var(--primary));
+  color: white;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.mode-card-body p {
+  font-size: 13px;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+  margin: 6px 0 12px;
+}
+
+.feature-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.feature-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--line);
+  color: var(--ink);
+}
+.commercial-mode-card.selected .feature-pill {
+  background: var(--card-bg-tint, var(--primary-light));
+  color: var(--card-theme, var(--primary));
+}
+
+/* 어른 모드 하위 난이도 세그먼트 박스 */
+.adult-sub-tier-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin: 10px 0 6px;
+  margin-top: 14px;
 }
 
-.submode-btn {
+.tier-box {
   border: 2px solid var(--line);
-  background: var(--bg);
-  border-radius: 14px;
-  padding: 10px 6px;
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 12px 6px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-.submode-btn.on {
-  background: var(--card);
-  border-color: var(--sub-color, var(--accent));
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+.tier-box:hover { border-color: var(--tier-color); }
+.tier-box.active {
+  border-color: var(--tier-color);
+  background: var(--tier-bg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
 }
-.submode-btn b { display: block; font-size: 14px; margin-bottom: 2px; }
-.submode-btn small { font-size: 10px; color: var(--mute); }
+.tier-box .tier-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: white;
+  background: var(--tier-color);
+  padding: 2px 6px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.tier-box b { display: block; font-size: 14px; font-weight: 800; }
+.tier-box small { font-size: 10px; color: var(--ink-secondary); font-weight: 600; display: block; margin-top: 2px; }
 
-/* 홈 화면 - 스테이지 맵 */
-.map { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; margin-top: 14px; }
+/* ==========================================================================
+   동물 친구 선택 그리드
+   ========================================================================== */
+.animal-select-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+.animal-tile {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.animal-tile:hover { transform: translateY(-3px); border-color: var(--primary); }
+.animal-tile.active {
+  border-color: #F59E0B;
+  background: #FFFBEB;
+  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.2);
+  transform: scale(1.05);
+}
+.animal-tile.active::after {
+  content: "✓";
+  position: absolute;
+  top: 6px; right: 6px;
+  font-size: 11px;
+  font-weight: 900;
+  color: white;
+  background: #F59E0B;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ==========================================================================
+   홈 & 스테이지 로드맵
+   ========================================================================== */
+.home-hero-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.hero-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--primary-light);
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.hero-stage-count {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.map-wrapper {
+  background: var(--surface);
+  border-radius: 28px;
+  padding: 20px 14px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+}
+.map { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
 .c { position: relative; height: 64px; display: flex; align-items: center; justify-content: center; }
 .c::before { content: ""; position: absolute; background: var(--line); z-index: 0; }
 .c.r::before { left: 50%; right: -50%; top: calc(50% - 3px); height: 6px; }
 .c.l::before { left: -50%; right: 50%; top: calc(50% - 3px); height: 6px; }
 .c.d::before { top: 50%; bottom: -50%; left: calc(50% - 3px); width: 6px; }
-.c.dn::before { background: var(--accent); }
+.c.dn::before { background: var(--primary); }
 
 .node {
   position: relative;
@@ -181,219 +440,279 @@ button { font: inherit; color: inherit; cursor: pointer; }
   height: 48px;
   border-radius: 50%;
   border: 3px solid var(--line);
-  background: var(--card);
-  font-size: 18px;
+  background: var(--surface);
+  font-size: 16px;
   font-weight: 800;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
 }
-.node.done { border-color: var(--accent); }
-.node.cur { border-color: #f5a524; background: #fff3cf; animation: hop 1s ease-in-out infinite alternate; }
-.node:disabled { opacity: 0.45; cursor: default; }
+.node.done { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+.node.cur {
+  border-color: #F59E0B;
+  background: #FFFBEB;
+  animation: hop 1s ease-in-out infinite alternate;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+.node:disabled { opacity: 0.35; cursor: default; }
 @keyframes hop { to { transform: translateY(-5px); } }
 
-/* 테마 선택기 */
-.themes { display: flex; gap: 8px; align-items: center; margin: 12px 0; }
-.themes span { color: var(--mute); font-size: 13px; font-weight: 600; }
-.themes button { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); font-size: 18px; padding: 0; }
-.themes button.on { border-color: var(--accent); outline: 2px solid var(--accent); }
-.themes button:disabled { opacity: 0.35; }
-
-/* 인게임 화면 */
-.game-header {
-  background: var(--card);
-  border-radius: 18px;
-  padding: 10px 16px;
+/* 테마 선택 탭 */
+.theme-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 12px;
+  padding: 0 4px;
+}
+.theme-strip span { font-size: 12px; font-weight: 700; color: var(--ink-secondary); }
+.theme-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.theme-btn.active { border-color: var(--primary); transform: scale(1.1); box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
+
+/* ==========================================================================
+   인게임 HUD & 글래스 플라스크(Flask)
+   ========================================================================== */
+.ingame-dashboard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 12px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid var(--line);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 12px;
 }
-
-.game-title-group { display: flex; align-items: center; gap: 8px; }
-.stage-num-title { font-size: 18px; font-weight: 800; }
-.game-diff-badge {
+.dash-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stage-pill {
+  font-size: 18px;
+  font-weight: 800;
+}
+.dash-tier-badge {
   padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 11px;
+  border-radius: 8px;
+  font-size: 10px;
   font-weight: 800;
   color: white;
-  background: var(--accent);
+  text-transform: uppercase;
 }
 
-.moves-info-box {
+.dash-stats {
   text-align: right;
-  font-size: 12px;
-  color: var(--mute);
 }
-.moves-info-box strong { font-size: 15px; color: var(--ink); }
+.dash-moves-main {
+  font-size: 16px;
+  font-weight: 800;
+}
+.dash-moves-main strong { color: var(--primary); font-size: 18px; }
+.dash-opt-sub {
+  font-size: 11px;
+  color: var(--ink-secondary);
+  font-weight: 600;
+}
 
-/* 동물 친구 (어린이 모드 전용) */
-.buddy { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 42px; min-height: 52px; margin-bottom: 4px; }
+/* 동물 친구 바운스 (어린이 모드) */
+.buddy-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 44px;
+  min-height: 52px;
+  margin-bottom: 2px;
+}
 #bd { display: inline-block; animation: bob 1.6s ease-in-out infinite alternate; }
 #bd.cheer { animation: cheer 0.7s; }
 @keyframes bob { to { transform: translateY(-6px); } }
 @keyframes cheer { 30% { transform: translateY(-16px) rotate(-14deg) scale(1.25); } 60% { transform: translateY(0) rotate(14deg); } }
 
-/* 병(Flask/Tube) 영역 */
-.tubes-container {
+/* 병(Flask) 렌더링 컨테이너 */
+.tubes-canvas {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-content: center;
-  gap: 20px 14px;
-  padding: 24px 0 16px;
+  gap: 18px 12px;
+  padding: 20px 0 16px;
   flex: 1;
 }
 
-.tube {
-  width: 48px;
-  height: 172px;
-  border: 3.5px solid var(--line);
+.flask {
+  width: 50px;
+  height: 180px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  border: 3.5px solid rgba(255, 255, 255, 0.95);
   border-top-color: transparent;
-  border-radius: 6px 6px 24px 24px;
-  background: var(--glass);
+  border-radius: 0 0 25px 25px;
+  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.15), inset 0 0 10px rgba(255,255,255,0.7);
   display: flex;
   flex-direction: column-reverse;
-  padding: 2.5px;
-  gap: 2.5px;
-  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 3px;
+  gap: 3px;
   cursor: pointer;
   position: relative;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.tube::before {
+/* 병 주둥이 림 */
+.flask::before {
   content: "";
   position: absolute;
-  left: 5px;
-  top: 8px;
-  bottom: 18px;
+  top: -4px;
+  left: -5px;
+  right: -5px;
+  height: 8px;
+  border: 3.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  z-index: 3;
+}
+
+/* 반사 광택 */
+.flask::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 4px;
   width: 4px;
+  bottom: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.1) 100%);
   border-radius: 4px;
-  background: rgba(255,255,255,0.6);
   pointer-events: none;
-  z-index: 2;
+  z-index: 4;
 }
 
-.tube.sel {
-  transform: translateY(-20px);
-  border-color: var(--accent);
-  border-top-color: transparent;
+.flask.selected {
+  transform: translateY(-22px) scale(1.04);
+  box-shadow: 0 24px 32px -6px rgba(79, 70, 229, 0.25);
 }
 
-.tube.pouring {
+.flask.pouring {
   z-index: 20;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.tube.ok { border-color: var(--accent); }
-.tube.full { animation: pulse 0.5s; }
-.tube.full::after {
+.flask.completed {
+  border-color: #10B981;
+  animation: flaskPulse 0.5s ease;
+}
+.flask.completed::after {
   content: "✨";
   position: absolute;
   left: 50%;
-  top: -8px;
+  top: -12px;
   font-size: 24px;
-  animation: spark 0.9s ease-out forwards;
+  animation: sparkFloat 0.9s ease-out forwards;
   pointer-events: none;
-  z-index: 3;
+  z-index: 5;
 }
-@keyframes pulse { 40% { transform: scale(1.1); } }
-@keyframes spark { from { transform: translate(-50%, 0); opacity: 1; } to { transform: translate(-50%, -32px); opacity: 0; } }
+@keyframes flaskPulse { 40% { transform: scale(1.08); } }
+@keyframes sparkFloat { from { transform: translate(-50%, 0); opacity: 1; } to { transform: translate(-50%, -36px); opacity: 0; } }
 
-/* 액체 레이어(Seg) */
-.seg {
+/* 액체 레이어 */
+.liquid-seg {
   flex: 1;
   border-radius: 4px 4px 18px 18px;
   position: relative;
   overflow: hidden;
   transition: height 0.25s ease;
+  box-shadow: inset 0 2px 3px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.1);
 }
-.seg:not(:first-child) { border-radius: 4px; }
-.seg::after {
+.liquid-seg:not(:first-child) { border-radius: 4px; }
+.liquid-seg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 45%, rgba(0,0,0,0.12));
+  background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%, rgba(0,0,0,0.12) 100%);
 }
-.seg:last-child::before {
+.liquid-seg:last-child::before {
   content: "";
   position: absolute;
   left: 0; right: 0; top: 0; height: 6px;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.45);
   border-radius: 50%;
 }
-.seg.q {
-  background: #7b8a92 !important;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 14px;
-}
 
-/* 어린이 모드 튜브 크기 확장 */
-.kid .tube {
-  width: 62px;
-  height: 204px;
-  border-radius: 8px 8px 30px 30px;
+/* 어린이 모드 튜브 확대 */
+.kid .flask {
+  width: 64px;
+  height: 210px;
+  border-radius: 0 0 32px 32px;
 }
-.kid .seg { border-radius: 6px 6px 26px 26px; }
-.kid .seg:not(:first-child) { border-radius: 6px; }
+.kid .liquid-seg { border-radius: 6px 6px 26px 26px; }
 
-/* 하단 액션 버튼 바 */
-.actions {
+/* 하단 컨트롤 바 */
+.ingame-control-bar {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   margin-top: 14px;
 }
-
-/* 동물 선택 그리드 */
-.animals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
-.an { font-size: 42px; background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 12px 0; }
-.an:active { transform: scale(0.95); }
+.ctrl-pill-btn {
+  flex: 1;
+  height: 52px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ctrl-pill-btn:disabled { opacity: 0.4; cursor: default; transform: none !important; }
+.ctrl-pill-btn:active:not(:disabled) { transform: scale(0.96); }
 
 /* 모달 팝업 */
-.overlay {
+.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 26, 32, 0.55);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
   display: none;
   align-items: center;
   justify-content: center;
   padding: 20px;
   z-index: 100;
 }
-.overlay.on { display: flex; }
-.modal {
-  background: var(--card);
-  border-radius: 24px;
-  padding: 28px 24px;
-  max-width: 360px;
+.modal-overlay.active { display: flex; }
+.modal-window {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  padding: 32px 24px;
+  max-width: 380px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
-  animation: pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-lg);
+  animation: modalZoomIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-@keyframes pop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-.modal h2 { font-size: 24px; margin-bottom: 8px; font-weight: 800; }
-.modal p { color: var(--mute); font-size: 14px; margin-bottom: 20px; line-height: 1.45; }
-.modal .btn { width: 100%; margin: 5px 0; }
-.pet { font-size: 60px; line-height: 1.2; margin-bottom: 8px; animation: dance 0.8s ease-in-out infinite alternate; }
-@keyframes dance { from { transform: rotate(-8deg); } to { transform: rotate(8deg) scale(1.15); } }
+@keyframes modalZoomIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-/* 테마 배경 */
-body[data-th="sea"] { --bg: linear-gradient(#c9f0f7, #5fb4d4); --ink: #0b3a4f; --mute: #2f6479; --card: rgba(255,255,255,.82); --line: #8cc9dd; --accent: #0a7fa0; }
-body[data-th="forest"] { --bg: linear-gradient(#e3f3d0, #86bf7b); --ink: #1f3d22; --mute: #46703f; --card: rgba(255,255,255,.82); --line: #a8cf9a; --accent: #2f8a3d; }
-body[data-th="space"] { --bg: linear-gradient(#1b1740, #07071a); --ink: #eaeaff; --mute: #a9a9d6; --card: rgba(24,40,48,.85); --line: #4a4a8a; --accent: #8f7bff; }
-body[data-th="candy"] { --bg: linear-gradient(#ffe3f1, #ffc2de); --ink: #5a1f43; --mute: #9a4f7c; --card: rgba(255,255,255,.85); --line: #f2a9cd; --accent: #e0409a; }
+.modal-badge-icon { font-size: 56px; margin-bottom: 10px; line-height: 1; }
+.modal-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.modal-text { color: var(--ink-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 22px; }
 
 [hidden] { display: none !important; }
 </style>
@@ -401,277 +720,336 @@ body[data-th="candy"] { --bg: linear-gradient(#ffe3f1, #ffc2de); --ink: #5a1f43;
 <body>
 
 <main>
-  <!-- 1. 상단 다국어 선택 바 -->
-  <div class="top-nav">
-    <div class="lang-group" id="lang-bar">
-      <button class="lang-btn" data-lang="ko">한국어</button>
-      <button class="lang-btn" data-lang="ja">日本語</button>
-      <button class="lang-btn" data-lang="en">English</button>
-    </div>
-    <button class="animal-avatar-btn" id="avatar-btn" title="Animal Buddy">🐰</button>
-  </div>
+  <!-- 1. 상단 글로벌 네비게이션 헤더 -->
+  <header class="top-header">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <!-- 되돌리기(뒤로가기) 버튼 -->
+      <button class="back-nav-btn" id="global-back-btn" style="display:none;">
+        <span>←</span> <span id="txt-back-btn">뒤로</span>
+      </button>
 
-  <!-- 2. 동물 친구 선택 뷰 (첫 실행 또는 아바타 클릭 시) -->
+      <!-- 3개 국어 세그먼트 셀렉터 -->
+      <div class="lang-segment">
+        <button class="lang-chip active" data-lang="ko">한국어</button>
+        <button class="lang-chip" data-lang="ja">日本語</button>
+        <button class="lang-chip" data-lang="en">English</button>
+      </div>
+    </div>
+
+    <!-- 동물 친구 아바타 버튼 -->
+    <button class="avatar-badge-btn" id="avatar-trigger-btn" title="Choose Partner">🐰</button>
+  </header>
+
+  <!-- 2. 동물 친구 선택 뷰 (view-pick) -->
   <section id="view-pick" hidden>
-    <h1 id="pick-title">좋아하는 동물을 골라요</h1>
-    <p class="sub" id="pick-sub">이 친구가 함께 응원하며 달려요!</p>
-    <div class="animals" id="animal-grid"></div>
+    <div class="page-title-wrap">
+      <h1 class="page-title" id="pick-title">동물 파트너 선택</h1>
+      <p class="page-desc" id="pick-desc">언제나 함께 달리며 응원해 줄 귀여운 단짝을 골라보세요!</p>
+    </div>
+    <div class="animal-select-grid" id="animal-grid"></div>
   </section>
 
-  <!-- 3. 모드 선택 뷰 (어린이 모드 vs 어른 모드[일반/프로/헬]) -->
-  <section id="view-mode" hidden class="mode-section">
-    <h1 id="mode-title">누가 플레이하나요?</h1>
-    <p class="sub" id="mode-sub">선택한 모드에 맞춰 난이도와 화면이 변경됩니다. 언제든 다시 바꿀 수 있어요.</p>
-
-    <!-- 어린이 모드 카드 -->
-    <div class="mode-card-big" id="card-kid">
-      <b>🧒 <span id="txt-kid-title">어린이 모드</span></b>
-      <small id="txt-kid-sub">병이 크고 색이 적어 쉬워요! 이동 제한 없이 마음껏 정렬할 수 있어요.</small>
+  <!-- 3. 모드 선택 뷰 (view-mode) - 상업용 비주얼 카드 -->
+  <section id="view-mode" hidden>
+    <div class="page-title-wrap">
+      <h1 class="page-title" id="mode-title">게임 모드 선택</h1>
+      <p class="page-desc" id="mode-desc">플레이어의 연령대와 취향에 맞춰 최적화된 난이도를 선택하세요.</p>
     </div>
 
-    <!-- 어른 모드 카드 및 하위 난이도 -->
-    <div class="mode-card-big" id="card-adult">
-      <b>🧑 <span id="txt-adult-title">어른 모드</span></b>
-      <small id="txt-adult-sub">생각할 거리가 많고 실시간 최단수(M_opt) 제한이 적용되는 두뇌 퍼즐입니다.</small>
+    <div class="mode-card-container">
+      <!-- 🧒 어린이 모드 카드 -->
+      <div class="commercial-mode-card" id="card-mode-kid" style="--card-theme: var(--kid-color); --card-bg-tint: var(--kid-bg);">
+        <div class="card-top-row">
+          <div class="card-icon-title">
+            <div class="mode-icon-circle">🧒</div>
+            <div class="mode-heading-wrap">
+              <h3 id="txt-kid-name">어린이 모드</h3>
+              <div class="mode-stars">★☆☆☆☆ <span style="color:var(--ink-secondary); font-size:11px;">Easy</span></div>
+            </div>
+          </div>
+          <div class="selection-check">✓</div>
+        </div>
+        <div class="mode-card-body">
+          <p id="txt-kid-desc">병이 큼직하고 색상이 적어 쉽게 풀려요. 이동 횟수 제한 없이 동물 친구와 즐겁게 플레이하세요!</p>
+          <div class="feature-pills">
+            <span class="feature-pill" id="pill-kid-1">✨ 색상 2~3종</span>
+            <span class="feature-pill" id="pill-kid-2">♾️ 이동 횟수 무제한</span>
+            <span class="feature-pill" id="pill-kid-3">🎉 동물 친구 댄스</span>
+          </div>
+        </div>
+      </div>
 
-      <!-- 어른 모드 3단계 하위 난이도 선택 버튼 -->
-      <div class="adult-submodes">
-        <div class="submode-btn on" data-sub="casual" style="--sub-color: var(--casual);">
-          <b id="txt-sub-casual">일반 (Casual)</b>
-          <small id="txt-sub-casual-d">M_opt + 15회</small>
+      <!-- 🧑 어른 모드 카드 및 하위 3단계 난이도 -->
+      <div class="commercial-mode-card selected" id="card-mode-adult" style="--card-theme: var(--primary); --card-bg-tint: var(--primary-light);">
+        <div class="card-top-row">
+          <div class="card-icon-title">
+            <div class="mode-icon-circle" style="background:#EEF2FF; color:var(--primary);">🧑</div>
+            <div class="mode-heading-wrap">
+              <h3 id="txt-adult-name">어른 모드</h3>
+              <div class="mode-stars">★★★☆☆ <span style="color:var(--ink-secondary); font-size:11px;">Challenging</span></div>
+            </div>
+          </div>
+          <div class="selection-check">✓</div>
         </div>
-        <div class="submode-btn" data-sub="pro" style="--sub-color: var(--pro);">
-          <b id="txt-sub-pro">프로 (Pro)</b>
-          <small id="txt-sub-pro-d">M_opt + 3회</small>
-        </div>
-        <div class="submode-btn" data-sub="hell" style="--sub-color: var(--hell);">
-          <b id="txt-sub-hell">헬 (Hell)</b>
-          <small id="txt-sub-hell-d">빈 병 1개 · 오차 0</small>
+        <div class="mode-card-body">
+          <p id="txt-adult-desc">실시간 BFS 엔진이 계산한 최단 이동수(M_opt) 제한이 적용되는 고난도 전략 퍼즐입니다.</p>
+          
+          <!-- 하위 난이도 세그먼트 버튼 -->
+          <div class="adult-sub-tier-grid">
+            <!-- 1) 일반 -->
+            <div class="tier-box active" data-sub="casual" style="--tier-color: var(--casual); --tier-bg: var(--casual-bg);">
+              <span class="tier-badge" id="tier-badge-casual">CASUAL</span>
+              <b id="tier-title-casual">일반</b>
+              <small id="tier-sub-casual">M_opt + 15</small>
+            </div>
+            <!-- 2) 프로 -->
+            <div class="tier-box" data-sub="pro" style="--tier-color: var(--pro); --tier-bg: var(--pro-bg);">
+              <span class="tier-badge" id="tier-badge-pro">PRO</span>
+              <b id="tier-title-pro">프로</b>
+              <small id="tier-sub-pro">M_opt + 3</small>
+            </div>
+            <!-- 3) 헬 -->
+            <div class="tier-box" data-sub="hell" style="--tier-color: var(--hell); --tier-bg: var(--hell-bg);">
+              <span class="tier-badge" id="tier-badge-hell" style="background:#EF4444;">🔥 HELL</span>
+              <b id="tier-title-hell">헬 (지옥)</b>
+              <small id="tier-sub-hell">빈 병 1개 · 오차 0</small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 4. 홈 / 스테이지 맵 뷰 -->
+  <!-- 4. 홈 & 스테이지 로드맵 (view-home) -->
   <section id="view-home" hidden>
-    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <!-- 상단 진행 요약 히어로 카드 -->
+    <div class="home-hero-card">
       <div>
-        <h1 id="home-title">물 붓기</h1>
-        <p class="sub" id="home-sub" style="margin-bottom:8px;">한 병에 한 가지 색만 남도록 물을 부어보세요.</p>
+        <div class="hero-mode-pill" id="home-mode-pill">🧒 어린이 모드</div>
+        <div class="hero-stage-count" id="home-progress-txt">Stage 1 / 30</div>
       </div>
-      <button class="btn ghost" id="change-mode-btn" style="padding:7px 12px; font-size:13px; border-radius:20px;">⚙️ Mode</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-secondary-3d" id="home-change-mode-btn">⚙️ <span id="txt-change-mode">모드 변경</span></button>
+        <button class="btn-primary-3d" id="home-play-btn" style="padding:10px 18px; font-size:15px;">▶ <span id="txt-play-btn">플레이</span></button>
+      </div>
     </div>
 
-    <div style="display:flex; gap:8px; margin: 6px 0 10px;">
-      <button class="btn" id="resume-btn" style="flex:1;">이어하기</button>
-    </div>
+    <!-- 배경 테마 선택 탭 -->
+    <div class="theme-strip" id="theme-strip"></div>
 
-    <div class="themes" id="themes-bar"></div>
-    <div class="map" id="stage-map"></div>
+    <!-- 로드맵 맵 -->
+    <div class="map-wrapper">
+      <div class="map" id="stage-roadmap"></div>
+    </div>
   </section>
 
-  <!-- 5. 인게임 플레이 뷰 -->
+  <!-- 5. 인게임 플레이 화면 (view-game) -->
   <section id="view-game" hidden>
-    <div class="game-header">
-      <div class="game-title-group">
-        <button class="btn ghost" id="btn-back" style="padding:6px 10px; font-size:13px; border-radius:12px;">←</button>
+    <!-- 인게임 상단 대시보드 -->
+    <div class="ingame-dashboard">
+      <div class="dash-left">
+        <button class="back-nav-btn" id="game-back-to-home-btn" style="padding:6px 12px; font-size:12px;">←</button>
         <div>
-          <span class="stage-num-title" id="game-stage-num">Stage 1</span>
-          <span class="game-diff-badge" id="game-diff-tag">CASUAL</span>
+          <div class="stage-pill" id="dash-stage-num">Stage 1</div>
+          <span class="dash-tier-badge" id="dash-tier-badge" style="background:var(--primary);">CASUAL</span>
         </div>
       </div>
-      <div class="moves-info-box">
-        <div><span id="label-moves">이동</span>: <strong id="moves-used-txt">0</strong> <span id="moves-limit-txt">/ 15</span></div>
-        <small id="moves-opt-txt" style="color:var(--mute); font-size:11px;">M_opt: 6</small>
+      <div class="dash-stats">
+        <div class="dash-moves-main">
+          <span id="dash-label-moves">이동</span>: <strong id="dash-moves-used">0</strong> <span id="dash-moves-limit">/ 15</span>
+        </div>
+        <div class="dash-opt-sub" id="dash-opt-txt">Optimal: 6 moves</div>
       </div>
     </div>
 
     <!-- 어린이 모드 동물 친구 응원 -->
-    <div class="buddy" id="buddy-box" hidden>
+    <div class="buddy-bar" id="ingame-buddy" hidden>
       <span id="bd">🐰</span>
       <span id="bb"></span>
     </div>
 
-    <!-- 병 레이아웃 -->
-    <div class="tubes-container" id="tubes-wrap"></div>
-    <p class="sub" id="game-note" style="text-align:center; min-height:18px; margin-bottom:4px; font-size:12px;"></p>
+    <!-- 플라스크(Flask) 배치 캔버스 -->
+    <div class="tubes-canvas" id="tubes-canvas"></div>
 
-    <!-- 하단 조작 바 -->
-    <div class="actions">
-      <button class="btn ghost" id="btn-undo">↩️ 되돌리기</button>
-      <button class="btn ghost" id="btn-sound">🔊 소리</button>
-      <button class="btn ghost" id="btn-restart">🔄 다시하기</button>
+    <!-- 하단 액션 버튼 바 -->
+    <div class="ingame-control-bar">
+      <button class="ctrl-pill-btn" id="btn-undo">
+        <span>↩️</span> <span id="txt-undo">되돌리기</span>
+      </button>
+      <button class="ctrl-pill-btn" id="btn-sound">
+        <span>🔊</span> <span id="txt-sound">소리</span>
+      </button>
+      <button class="ctrl-pill-btn" id="btn-restart">
+        <span>🔄</span> <span id="txt-restart">다시 시작</span>
+      </button>
     </div>
   </section>
 </main>
 
 <!-- 승리 클리어 모달 -->
-<div class="overlay" id="modal-win">
-  <div class="modal">
-    <div class="pet" id="win-pet">🎉</div>
-    <h2 id="win-title">클리어!</h2>
-    <p id="win-msg">정말 멋져요!</p>
-    <button class="btn" id="win-btn-next">다음 단계</button>
-    <button class="btn ghost" id="win-btn-list">목록으로</button>
+<div class="modal-overlay" id="modal-win">
+  <div class="modal-window">
+    <div class="modal-badge-icon" id="win-badge-icon">🎉</div>
+    <h2 class="modal-title" id="win-title-txt" style="color:#10B981;">스테이지 클리어!</h2>
+    <p class="modal-text" id="win-desc-txt">완벽한 물 붓기 정렬을 완료했습니다!</p>
+    <button class="btn-primary-3d" id="win-next-btn" style="width:100%; margin-bottom:10px;">다음 단계</button>
+    <button class="btn-secondary-3d" id="win-home-btn" style="width:100%;">스테이지 목록</button>
   </div>
 </div>
 
 <!-- 이동 횟수 소진(게임오버) 모달 -->
-<div class="overlay" id="modal-fail">
-  <div class="modal">
-    <div style="font-size:52px; margin-bottom:8px;">⏳</div>
-    <h2 id="fail-title" style="color:#e53e3e;">이동 횟수 소진!</h2>
-    <p id="fail-msg">허용된 이동 횟수를 모두 사용했습니다.</p>
-    <button class="btn" id="fail-btn-retry" style="background:#718096;">다시 시도</button>
-    <button class="btn ghost" id="fail-btn-mode">난이도 변경</button>
+<div class="modal-overlay" id="modal-fail">
+  <div class="modal-window">
+    <div class="modal-badge-icon">⏳</div>
+    <h2 class="modal-title" id="fail-title-txt" style="color:#EF4444;">이동 횟수 초과!</h2>
+    <p class="modal-text" id="fail-desc-txt">허용된 이동 횟수를 모두 소진했습니다.</p>
+    <button class="btn-primary-3d" id="fail-retry-btn" style="width:100%; margin-bottom:10px; background:#64748B;">다시 도전</button>
+    <button class="btn-secondary-3d" id="fail-mode-btn" style="width:100%;">난이도 변경</button>
   </div>
 </div>
 
 <script>
 /* ==========================================================================
-   다국어 사전 (ko, ja, en)
+   다국어 사전 (한국어, 日本語, English)
    ========================================================================== */
 const I18N = {
   ko: {
-    appTitle: "물 붓기",
-    who: "누가 플레이하나요?",
-    whoSub: "선택한 모드에 맞춰 난이도와 화면이 바뀝니다. 언제든 변경 가능해요.",
-    kid: "어린이 모드",
-    kidSub: "병이 크고 색이 적어 쉬워요! 이동 제한 없이 마음껏 즐겨요.",
-    adult: "어른 모드",
-    adultSub: "생각할 거리가 많고 실시간 최단수(M_opt) 제한이 적용되는 두뇌 퍼즐입니다.",
-    subCasual: "일반",
-    subCasualD: "M_opt + 15회",
-    subPro: "프로",
-    subProD: "M_opt + 3회",
-    subHell: "헬",
-    subHellD: "빈 병 1개 · 오차 0",
-    homeSub: "한 병에 한 가지 색만 남도록 물을 부어보세요.",
-    resume: "이어하기",
-    resumeN: "이어하기 · {n}단계",
-    stage: "{n}단계",
+    back: "뒤로",
+    pickTitle: "동물 파트너 선택",
+    pickDesc: "언제나 함께 달리며 응원해 줄 귀여운 단짝을 골라보세요!",
+    modeTitle: "게임 모드 선택",
+    modeDesc: "플레이어의 연령대와 취향에 맞춰 최적화된 난이도를 선택하세요.",
+    kidName: "어린이 모드",
+    kidDesc: "병이 큼직하고 색상이 적어 쉽게 풀려요. 이동 횟수 제한 없이 동물 친구와 즐겁게 플레이하세요!",
+    kidPill1: "✨ 색상 2~3종",
+    kidPill2: "♾️ 이동 횟수 무제한",
+    kidPill3: "🎉 동물 친구 댄스",
+    adultName: "어른 모드",
+    adultDesc: "실시간 BFS 엔진이 계산한 최단 이동수(M_opt) 제한이 적용되는 고난도 전략 퍼즐입니다.",
+    tierCasual: "일반",
+    tierCasualD: "M_opt + 15회",
+    tierPro: "프로",
+    tierProD: "M_opt + 3회",
+    tierHell: "헬 (지옥)",
+    tierHellD: "빈 병 1개 · 오차 0",
+    changeMode: "모드 변경",
+    play: "플레이",
+    stage: "스테이지 {n}",
     moves: "이동",
     unlimited: "무제한",
-    optMoves: "최적: {n}회",
+    optimalTxt: "최적: {n}회",
     undo: "되돌리기",
+    sound: "소리",
     soundOn: "소리 켜기",
     soundOff: "소리 끄기",
     restart: "다시 시작",
-    clear: "스테이지 클리어!",
-    kidClear: "와, 해냈어요!",
-    kidMsg: "참 잘했어요! ⭐⭐⭐",
-    solved: "{n}회 만에 풀었어요! (최적: {opt}회)",
-    keep: " 최고 기록은 {p}회예요.",
-    newBest: " 새 최고 기록이에요!",
-    next: "다음 단계",
-    back: "목록",
-    pick: "좋아하는 동물을 골라요",
-    pickSub: "이 친구가 함께 응원하며 달려요!",
     theme: "테마",
+    clearTitle: "스테이지 클리어!",
+    kidClearTitle: "와, 해냈어요!",
+    kidClearMsg: "정말 대단해요! 별 세 개 획득! ⭐⭐⭐",
+    solvedMsg: "{moves}회 만에 클리어! (최적 최단수: {opt}회)",
+    nextStage: "다음 단계",
+    stageList: "스테이지 목록",
     failTitle: "이동 횟수 초과!",
-    failMsg: "{diff} 모드의 이동 제한({limit}회)에 도달했습니다.",
-    retry: "다시 시도",
-    changeMode: "난이도 변경",
-    note: "?로 가려진 칸은 위를 비워야 색이 드러나요."
+    failMsg: "{tier} 모드의 이동 제한({limit}회)에 도달했습니다.",
+    retry: "다시 도전"
   },
   ja: {
-    appTitle: "水そそぎ パズル",
-    who: "だれが遊びますか?",
-    whoSub: "選んだモードに合わせて難しさと画面が変わります。いつでも変更できます。",
-    kid: "こども モード",
-    kidSub: "びんが大きくて色が少ないので簡単! 手数制限なしで楽しく遊べます。",
-    adult: "おとな モード",
-    adultSub: "しっかり考えごたえがあり、最短手数(M_opt)制限がある本格パズルです。",
-    subCasual: "ノーマル",
-    subCasualD: "M_opt + 15手",
-    subPro: "プロ",
-    subProD: "M_opt + 3手",
-    subHell: "ヘル(地獄)",
-    subHellD: "空びん1本・ミス0",
-    homeSub: "びんの水を移し、１本のびんに１色だけになるように揃えましょう。",
-    resume: "つづきから",
-    resumeN: "つづきから · ステージ{n}",
+    back: "もどる",
+    pickTitle: "どうぶつパートナー選択",
+    pickDesc: "いつでも一緒に走って応援してくれる可愛い相棒を選んでね!",
+    modeTitle: "ゲームモード選択",
+    modeDesc: "年齢や好みに合わせて最適化された難易度を選択してください。",
+    kidName: "こども モード",
+    kidDesc: "びんが大きくて色が少ないので簡単! 手数制限なしで動物のお友達と楽しく遊べます。",
+    kidPill1: "✨ 色は2~3色",
+    kidPill2: "♾️ 移動手数 無制限",
+    kidPill3: "🎉 動物のダンス応援",
+    adultName: "おとな モード",
+    adultDesc: "リアルタイムBFSエンジンが計算した最短手数(M_opt)制限がある本格頭脳パズルです。",
+    tierCasual: "ノーマル",
+    tierCasualD: "M_opt + 15手",
+    tierPro: "プロ",
+    tierProD: "M_opt + 3手",
+    tierHell: "ヘル(地獄)",
+    tierHellD: "空びん1本・ミス0",
+    changeMode: "モード変更",
+    play: "あそぶ",
     stage: "ステージ {n}",
     moves: "移動",
     unlimited: "無制限",
-    optMoves: "最適: {n}手",
+    optimalTxt: "最短: {n}手",
     undo: "１つ戻す",
+    sound: "音",
     soundOn: "音をオン",
     soundOff: "音をオフ",
     restart: "やり直す",
-    clear: "ステージクリア!",
-    kidClear: "やったね!",
-    kidMsg: "よくできました! ⭐⭐⭐",
-    solved: "{n}手で解けました! (最短: {opt}手)",
-    keep: " ベスト記録は{p}手です。",
-    newBest: " 新しいベスト記録です!",
-    next: "次のステージ",
-    back: "ステージ一覧",
-    pick: "すきなどうぶつをえらんでね",
-    pickSub: "この子が一緒に走って応援してくれるよ!",
     theme: "テーマ",
+    clearTitle: "ステージクリア!",
+    kidClearTitle: "やったね!",
+    kidClearMsg: "とってもじょうず! 星3つ獲得! ⭐⭐⭐",
+    solvedMsg: "{moves}手でクリア! (最短手数: {opt}手)",
+    nextStage: "次のステージ",
+    stageList: "ステージ一覧",
     failTitle: "手数オーバー!",
-    failMsg: "{diff}モードの制限手数({limit}手)を超えました。",
-    retry: "もう一度挑戦",
-    changeMode: "難易度を変更",
-    note: "「?」のマスは、上の水を移すと色が見えます。"
+    failMsg: "{tier}モードの制限手数({limit}手)を超えました。",
+    retry: "もう一度挑戦"
   },
   en: {
-    appTitle: "Water Sort",
-    who: "Who’s playing?",
-    whoSub: "Difficulty and layout adapt to your mode. You can switch anytime.",
-    kid: "Kids Mode",
-    kidSub: "Fewer colors & bigger tubes! Relaxed with unlimited moves.",
-    adult: "Adult Mode",
-    adultSub: "Brain-challenging puzzle with optimal move (M_opt) limits.",
-    subCasual: "Casual",
-    subCasualD: "M_opt + 15 moves",
-    subPro: "Pro",
-    subProD: "M_opt + 3 moves",
-    subHell: "Hell",
-    subHellD: "Only 1 empty tube · 0 errors",
-    homeSub: "Pour water until each tube holds only one distinct color.",
-    resume: "Continue",
-    resumeN: "Continue · Stage {n}",
+    back: "Back",
+    pickTitle: "Choose Animal Buddy",
+    pickDesc: "Pick an adorable partner to cheer you on along the journey!",
+    modeTitle: "Select Game Mode",
+    modeDesc: "Choose the perfect difficulty tailored to your age and preferred challenge level.",
+    kidName: "Kids Mode",
+    kidDesc: "Larger tubes and fewer colors make it easy & fun! Relax with unlimited moves.",
+    kidPill1: "✨ 2~3 Colors",
+    kidPill2: "♾️ Unlimited Moves",
+    kidPill3: "🎉 Cheering Buddy",
+    adultName: "Adult Mode",
+    adultDesc: "Strategic puzzle with strict move limits based on real-time BFS optimal routes.",
+    tierCasual: "Casual",
+    tierCasualD: "M_opt + 15",
+    tierPro: "Pro",
+    tierProD: "M_opt + 3",
+    tierHell: "Hell",
+    tierHellD: "Only 1 Empty · 0 Error",
+    changeMode: "Mode",
+    play: "Play",
     stage: "Stage {n}",
     moves: "Moves",
     unlimited: "Unlimited",
-    optMoves: "Optimal: {n}",
+    optimalTxt: "Optimal: {n}",
     undo: "Undo",
+    sound: "Sound",
     soundOn: "Sound On",
     soundOff: "Sound Off",
     restart: "Restart",
-    clear: "Stage Clear!",
-    kidClear: "You Did It!",
-    kidMsg: "Great job! ⭐⭐⭐",
-    solved: "Solved in {n} moves! (Optimal: {opt})",
-    keep: " Your best is {p} moves.",
-    newBest: " New record!",
-    next: "Next Stage",
-    back: "Stages",
-    pick: "Pick your favorite buddy",
-    pickSub: "This friend will cheer you along the journey!",
     theme: "Theme",
+    clearTitle: "Stage Complete!",
+    kidClearTitle: "You Did It!",
+    kidClearMsg: "Awesome job! You earned 3 stars! ⭐⭐⭐",
+    solvedMsg: "Solved in {moves} moves! (Optimal: {opt})",
+    nextStage: "Next Stage",
+    stageList: "Stage List",
     failTitle: "Out of Moves!",
-    failMsg: "You reached the limit of {limit} moves in {diff} Mode.",
-    retry: "Try Again",
-    changeMode: "Change Mode",
-    note: "Tiles marked ? reveal their color once you clear the water above."
+    failMsg: "You reached the limit of {limit} moves in {tier} Mode.",
+    retry: "Try Again"
   }
 };
 
 /* ==========================================================================
-   팔레트 및 사양 상수
+   상용 파스텔 컬러 & 상수
    ========================================================================== */
-const PASTEL_COLORS = [
-  "#FF99AA", "#94E6C4", "#C7B8F5", "#8FD4FA", "#FFF094",
-  "#FFC29E", "#EBA3E6", "#FF8585", "#85E09E", "#6E9EE3",
-  "#FAD194", "#AEBAFA"
+const PASTEL_PALETTE = [
+  "#FF8A9E", "#70DEB4", "#B8A7F7", "#76C7FA", "#FFDF70",
+  "#FFAF87", "#F09CE7", "#FF7373", "#74E396", "#5F95E8",
+  "#F5BF76", "#9CAEF7"
 ];
 
 const TOTAL_STAGES = 30;
 const CAPACITY = 4;
-const STORAGE_KEY = "waterSort_v2_data";
+const STORAGE_KEY = "waterSort_commercial_v3";
 
 let State = {
   lang: "ko",
@@ -681,10 +1059,11 @@ let State = {
   cleared: { kid: {}, adult_casual: {}, adult_pro: {}, adult_hell: {} },
   cur: null,
   mute: false,
-  theme: ""
+  theme: "",
+  previousView: "view-home"
 };
 
-// 로컬스토리지 불러오기
+// 세이브 데이터 복원
 try {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) State = Object.assign(State, JSON.parse(saved));
@@ -696,15 +1075,15 @@ function saveState() {
 
 const $ = id => document.getElementById(id);
 function t(key, params) {
-  let str = (I18N[State.lang] || I18N.ko)[key] || key;
+  let text = (I18N[State.lang] || I18N.ko)[key] || key;
   if (params) {
-    for (const p in params) str = str.replace("{" + p + "}", params[p]);
+    for (const k in params) text = text.replace("{" + k + "}", params[k]);
   }
-  return str;
+  return text;
 }
 
 /* ==========================================================================
-   Web Audio API 사운드 시스템
+   사운드 FX (Web Audio API)
    ========================================================================== */
 let audioCtx = null;
 function playSound(type) {
@@ -714,7 +1093,7 @@ function playSound(type) {
     if (audioCtx.state === "suspended") audioCtx.resume();
     const t0 = audioCtx.currentTime;
 
-    const tone = (freq, dur, at, wave = "sine", gain = 0.15) => {
+    const playTone = (freq, dur, at, wave = "sine", gain = 0.15) => {
       const osc = audioCtx.createOscillator();
       const g = audioCtx.createGain();
       osc.type = wave;
@@ -728,25 +1107,26 @@ function playSound(type) {
       osc.stop(t0 + at + dur + 0.02);
     };
 
-    if (type === "sel") tone(660, 0.08, 0, "sine", 0.12);
-    else if (type === "undo") tone(380, 0.12, 0, "triangle", 0.15);
-    else if (type === "ding") {
-      [1047, 1319, 1568].forEach((f, i) => tone(f, 0.22, i * 0.07, "triangle", 0.16));
-    }
+    if (type === "click") playTone(800, 0.05, 0, "sine", 0.08);
+    else if (type === "select") playTone(680, 0.08, 0, "sine", 0.12);
+    else if (type === "undo") playTone(380, 0.12, 0, "triangle", 0.15);
     else if (type === "pour") {
-      for (let i = 0; i < 5; i++) tone(430 + i * 65, 0.08, i * 0.05, "sine", 0.10);
+      for (let i = 0; i < 5; i++) playTone(440 + i * 65, 0.08, i * 0.05, "sine", 0.10);
+    }
+    else if (type === "complete") {
+      [1047, 1319, 1568].forEach((f, i) => playTone(f, 0.22, i * 0.07, "triangle", 0.16));
     }
     else if (type === "win") {
-      [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.25, i * 0.12, "triangle", 0.18));
+      [523, 659, 784, 1047].forEach((f, i) => playTone(f, 0.25, i * 0.12, "triangle", 0.18));
     }
     else if (type === "fail") {
-      [400, 340, 280].forEach((f, i) => tone(f, 0.25, i * 0.12, "sawtooth", 0.12));
+      [380, 320, 260].forEach((f, i) => playTone(f, 0.22, i * 0.10, "sawtooth", 0.12));
     }
   } catch(e) {}
 }
 
 /* ==========================================================================
-   BFS 최적 이동수(M_opt) 솔버
+   BFS 최적수(M_opt) 솔버
    ========================================================================== */
 class WaterSortSolver {
   static solve(tubes) {
@@ -759,12 +1139,12 @@ class WaterSortSolver {
     visited.add(this.getCanonicalKey(initial));
 
     let nodes = 0;
-    const MAX_NODES = 60000;
+    const MAX_NODES = 50000;
 
     while (queue.length > 0 && nodes++ < MAX_NODES) {
       const curr = queue.shift();
       const currTubes = curr.tubes;
-      let emptyTubeTargetUsed = false;
+      let emptyTargetUsed = false;
 
       for (let from = 0; from < n; from++) {
         const fromT = currTubes[from];
@@ -785,7 +1165,7 @@ class WaterSortSolver {
 
           if (toT.length === 0) {
             if (consecutive === fromT.length) continue;
-            if (emptyTubeTargetUsed) continue;
+            if (emptyTargetUsed) continue;
           } else {
             if (toT[toT.length - 1] !== topCol) continue;
           }
@@ -801,7 +1181,7 @@ class WaterSortSolver {
             nextTubes[to].push(nextTubes[from].pop());
           }
 
-          if (toT.length === 0) emptyTubeTargetUsed = true;
+          if (toT.length === 0) emptyTargetUsed = true;
           if (this.isSolved(nextTubes)) return curr.depth + 1;
 
           const key = this.getCanonicalKey(nextTubes);
@@ -824,9 +1204,9 @@ class WaterSortSolver {
     for (const t of tubes) {
       if (t.length === 0) continue;
       if (t.length !== CAPACITY) return false;
-      const first = t[0];
+      const f = t[0];
       for (let i = 1; i < t.length; i++) {
-        if (t[i] !== first) return false;
+        if (t[i] !== f) return false;
       }
     }
     return true;
@@ -848,31 +1228,29 @@ class WaterSortSolver {
 }
 
 /* ==========================================================================
-   스테이지 생성기 (어린이 모드 & 어른 일반/프로/헬)
+   스테이지 생성기 (어린이 vs 어른: 일반 / 프로 / 헬)
    ========================================================================== */
 function generateStage(stageNum) {
   let colorCount, emptyCount, deltaMoves, isUnlimited = false;
 
   if (State.mainMode === "kid") {
-    // 어린이 모드: 2~3색상, 2개 빈 병, 횟수 무제한
-    colorCount = stageNum <= 8 ? 2 : (stageNum <= 18 ? 3 : 4);
+    colorCount = stageNum <= 6 ? 2 : (stageNum <= 16 ? 3 : 4);
     emptyCount = 2;
     isUnlimited = true;
     deltaMoves = 999;
   } else {
-    // 어른 모드
     if (State.adultSub === "casual") {
-      colorCount = Math.min(3 + Math.floor((stageNum - 1) / 5), 5); // 3~5색
+      colorCount = Math.min(3 + Math.floor((stageNum - 1) / 5), 5);
       emptyCount = 2;
       deltaMoves = 15;
     } else if (State.adultSub === "pro") {
-      colorCount = Math.min(5 + Math.floor((stageNum - 1) / 4), 7); // 5~7색
+      colorCount = Math.min(5 + Math.floor((stageNum - 1) / 4), 7);
       emptyCount = 2;
       deltaMoves = 3;
     } else { // hell
-      colorCount = Math.min(7 + Math.floor((stageNum - 1) / 3), 9); // 7~9색
-      emptyCount = 1; // Hell 모드는 단 1개의 빈 병만 허용!
-      deltaMoves = 0; // M_limit = M_opt + 0 (단 1회의 실수도 불허)
+      colorCount = Math.min(7 + Math.floor((stageNum - 1) / 3), 9);
+      emptyCount = 1; // Hell: 단 1개의 빈 병만 제공!
+      deltaMoves = 0; // M_limit = M_opt + 0 (오차 0회 극한 퍼즐)
     }
   }
 
@@ -881,15 +1259,11 @@ function generateStage(stageNum) {
 
   for (let attempt = 0; attempt < 8; attempt++) {
     const tubes = [];
-    for (let c = 0; c < colorCount; c++) {
-      tubes.push([c, c, c, c]);
-    }
-    for (let e = 0; e < emptyCount; e++) {
-      tubes.push([]);
-    }
+    for (let c = 0; c < colorCount; c++) tubes.push([c, c, c, c]);
+    for (let e = 0; e < emptyCount; e++) tubes.push([]);
 
     const total = tubes.length;
-    const steps = 35 + (colorCount * 6);
+    const steps = 30 + (colorCount * 6);
 
     for (let s = 0; s < steps; s++) {
       const from = Math.floor(Math.random() * total);
@@ -922,11 +1296,47 @@ function generateStage(stageNum) {
 }
 
 /* ==========================================================================
-   UI 렌더링 & 상태 머신
+   화면 전환 및 되돌리기(Back) 제어
    ========================================================================== */
-let selectedTube = null;
-let lastMoveInfo = null;
+let currentActiveView = "view-home";
+let selectedTubeIdx = null;
 let isBusy = false;
+
+function showView(viewId, recordHistory = true) {
+  if (recordHistory && currentActiveView !== viewId) {
+    State.previousView = currentActiveView;
+  }
+  currentActiveView = viewId;
+
+  ["view-pick", "view-mode", "view-home", "view-game"].forEach(id => {
+    $(id).hidden = (id !== viewId);
+  });
+
+  // 상단 글로벌 '뒤로' 버튼 노출 조건:
+  // 동물 선택 뷰나 모드 선택 뷰에 진입했을 때 언제든 직전 화면으로 돌아갈 수 있도록 표시!
+  const showBackBtn = (viewId === "view-pick" || viewId === "view-mode");
+  $("global-back-btn").style.display = showBackBtn ? "inline-flex" : "none";
+
+  $("modal-win").classList.remove("active");
+  $("modal-fail").classList.remove("active");
+}
+
+function handleGlobalBack() {
+  playSound("click");
+  // 이전 뷰가 유효하면 해당 뷰로, 아니면 홈으로 복귀
+  if (State.previousView && State.previousView !== currentActiveView) {
+    showView(State.previousView, false);
+    if (State.previousView === "view-home") renderHomeScreen();
+    else if (State.previousView === "view-game") renderInGameScreen();
+  } else {
+    showHome();
+  }
+}
+
+function showHome() {
+  showView("view-home");
+  renderHomeScreen();
+}
 
 function getModeKey() {
   return State.mainMode === "kid" ? "kid" : `adult_${State.adultSub}`;
@@ -938,100 +1348,136 @@ function getClearedData() {
   return State.cleared[k];
 }
 
+/* ==========================================================================
+   UI 텍스트 및 다국어 실시간 동기화
+   ========================================================================== */
 function applyLanguage() {
   document.documentElement.lang = State.lang;
-  document.title = t("appTitle");
-  document.body.dataset.th = State.theme || "";
+  $("txt-back-btn").textContent = t("back");
 
-  // 네비게이션 버튼 활성화 표시
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.classList.toggle("on", btn.dataset.lang === State.lang);
+  // 언어 세그먼트 활성화 표시
+  document.querySelectorAll(".lang-chip").forEach(chip => {
+    chip.classList.toggle("active", chip.dataset.lang === State.lang);
   });
-  $("avatar-btn").textContent = State.animal;
+  $("avatar-trigger-btn").textContent = State.animal;
 
-  // 텍스트 매핑
-  $("pick-title").textContent = t("pick");
-  $("pick-sub").textContent = t("pickSub");
-  $("mode-title").textContent = t("who");
-  $("mode-sub").textContent = t("whoSub");
-  $("txt-kid-title").textContent = t("kid");
-  $("txt-kid-sub").textContent = t("kidSub");
-  $("txt-adult-title").textContent = t("adult");
-  $("txt-adult-sub").textContent = t("adultSub");
+  // 동물 선택 뷰
+  $("pick-title").textContent = t("pickTitle");
+  $("pick-desc").textContent = t("pickDesc");
 
-  $("txt-sub-casual").textContent = t("subCasual");
-  $("txt-sub-casual-d").textContent = t("subCasualD");
-  $("txt-sub-pro").textContent = t("subPro");
-  $("txt-sub-pro-d").textContent = t("subProD");
-  $("txt-sub-hell").textContent = t("subHell");
-  $("txt-sub-hell-d").textContent = t("subHellD");
+  // 모드 선택 뷰
+  $("mode-title").textContent = t("modeTitle");
+  $("mode-desc").textContent = t("modeDesc");
+  $("txt-kid-name").textContent = t("kidName");
+  $("txt-kid-desc").textContent = t("kidDesc");
+  $("pill-kid-1").textContent = t("kidPill1");
+  $("pill-kid-2").textContent = t("kidPill2");
+  $("pill-kid-3").textContent = t("kidPill3");
 
-  $("home-title").textContent = t("appTitle");
-  $("home-sub").textContent = t("homeSub");
-  $("resume-btn").textContent = State.cur ? t("resumeN", { n: State.cur.level }) : t("resume");
+  $("txt-adult-name").textContent = t("adultName");
+  $("txt-adult-desc").textContent = t("adultDesc");
+  $("tier-title-casual").textContent = t("tierCasual");
+  $("tier-sub-casual").textContent = t("tierCasualD");
+  $("tier-title-pro").textContent = t("tierPro");
+  $("tier-sub-pro").textContent = t("tierProD");
+  $("tier-title-hell").textContent = t("tierHell");
+  $("tier-sub-hell").textContent = t("tierHellD");
 
-  $("btn-undo").textContent = "↩️ " + t("undo");
-  $("btn-restart").textContent = "🔄 " + t("restart");
+  // 홈 화면
+  $("txt-change-mode").textContent = t("changeMode");
+  $("txt-play-btn").textContent = t("play");
+
+  // 인게임 HUD & 컨트롤
+  $("dash-label-moves").textContent = t("moves");
+  $("txt-undo").textContent = t("undo");
+  $("txt-restart").textContent = t("restart");
   setSoundBtnText();
 
-  $("label-moves").textContent = t("moves");
-  $("win-title").textContent = State.mainMode === "kid" ? t("kidClear") : t("clear");
-  $("win-btn-next").textContent = t("next");
-  $("win-btn-list").textContent = t("back");
-  $("fail-title").textContent = t("failTitle");
-  $("fail-btn-retry").textContent = t("retry");
-  $("fail-btn-mode").textContent = t("changeMode");
+  // 모달
+  $("win-next-btn").textContent = t("nextStage");
+  $("win-home-btn").textContent = t("stageList");
+  $("fail-title-txt").textContent = t("failTitle");
+  $("fail-retry-btn").textContent = t("retry");
+  $("fail-mode-btn").textContent = t("changeMode");
 
   document.body.classList.toggle("kid", State.mainMode === "kid");
+  updateModeCardVisuals();
 }
 
 function setSoundBtnText() {
-  $("btn-sound").textContent = State.mute ? ("🔇 " + t("soundOff")) : ("🔊 " + t("soundOn"));
+  $("txt-sound").textContent = State.mute ? t("soundOff") : t("soundOn");
 }
 
-/* 뷰 전환 */
-function showView(viewId) {
-  ["view-pick", "view-mode", "view-home", "view-game"].forEach(id => {
-    $(id).hidden = (id !== viewId);
+/* ==========================================================================
+   모드 선택 화면 비주얼 하이라이트 동기화
+   ========================================================================== */
+function updateModeCardVisuals() {
+  const isKid = (State.mainMode === "kid");
+  $("card-mode-kid").classList.toggle("selected", isKid);
+  $("card-mode-adult").classList.toggle("selected", !isKid);
+
+  document.querySelectorAll(".tier-box").forEach(box => {
+    box.classList.toggle("active", (!isKid && box.dataset.sub === State.adultSub));
   });
-  $("modal-win").classList.remove("on");
-  $("modal-fail").classList.remove("on");
 }
 
-function showHome() {
-  showView("view-home");
+/* ==========================================================================
+   홈 화면 렌더링 (히어로 뱃지, 테마, 로드맵)
+   ========================================================================== */
+function renderHomeScreen() {
+  // 1. 히어로 진행 뱃지
+  const pill = $("home-mode-pill");
+  if (State.mainMode === "kid") {
+    pill.textContent = `🧒 ${t("kidName")}`;
+    pill.style.background = "var(--kid-bg)";
+    pill.style.color = "var(--kid-color)";
+  } else {
+    const subTitle = State.adultSub === "casual" ? t("tierCasual") : (State.adultSub === "pro" ? t("tierPro") : t("tierHell"));
+    const color = State.adultSub === "casual" ? "var(--casual)" : (State.adultSub === "pro" ? "var(--pro)" : "var(--hell)");
+    const bg = State.adultSub === "casual" ? "var(--casual-bg)" : (State.adultSub === "pro" ? "var(--pro-bg)" : "var(--hell-bg)");
+    pill.textContent = `🧑 ${t("adultName")} · ${subTitle}`;
+    pill.style.background = bg;
+    pill.style.color = color;
+  }
+
+  const cleared = getClearedData();
+  let currentStage = 1;
+  while (currentStage <= TOTAL_STAGES && cleared[currentStage]) currentStage++;
+  $("home-progress-txt").textContent = `Stage ${currentStage} / ${TOTAL_STAGES}`;
+
+  // 2. 테마 탭
   renderThemes();
-  renderMap();
+
+  // 3. 로드맵 맵 렌더링
+  renderRoadmap(currentStage, cleared);
 }
 
 function renderThemes() {
   const themes = [["", "🎨", 0], ["sea", "🌊", 3], ["forest", "🌲", 8], ["space", "🌌", 15], ["candy", "🍬", 22]];
-  const bar = $("themes-bar");
-  bar.innerHTML = `<span>${t("theme")}:</span>`;
+  const strip = $("theme-strip");
+  strip.innerHTML = `<span>${t("theme")}:</span>`;
   const clearedCount = Object.keys(getClearedData()).length;
 
   themes.forEach(([thKey, icon, req]) => {
     const btn = document.createElement("button");
+    btn.className = "theme-btn" + (thKey === State.theme ? " active" : "");
     const unlocked = clearedCount >= req;
     btn.textContent = unlocked ? icon : "🔒";
     btn.disabled = !unlocked;
-    if (thKey === State.theme) btn.classList.add("on");
     btn.onclick = () => {
       State.theme = thKey;
       document.body.dataset.th = thKey;
       saveState();
+      playSound("click");
       renderThemes();
     };
-    bar.appendChild(btn);
+    strip.appendChild(btn);
   });
 }
 
-function renderMap() {
-  const mapEl = $("stage-map");
+function renderRoadmap(currentStage, cleared) {
+  const mapEl = $("stage-roadmap");
   mapEl.innerHTML = "";
-  const cleared = getClearedData();
-  let currentStage = 1;
-  while (currentStage <= TOTAL_STAGES && cleared[currentStage]) currentStage++;
 
   for (let i = 0; i < TOTAL_STAGES; i++) {
     const st = i + 1;
@@ -1051,13 +1497,19 @@ function renderMap() {
     else nodeBtn.textContent = cleared[st] ? "⭐" : st;
 
     nodeBtn.disabled = st > currentStage;
-    nodeBtn.onclick = () => startGame(st);
+    nodeBtn.onclick = () => {
+      playSound("click");
+      startGame(st);
+    };
 
     cell.appendChild(nodeBtn);
     mapEl.appendChild(cell);
   }
 }
 
+/* ==========================================================================
+   인게임 게임플레이 루프
+   ========================================================================== */
 function startGame(stageNum) {
   const data = generateStage(stageNum);
   State.cur = {
@@ -1069,106 +1521,106 @@ function startGame(stageNum) {
     isUnlimited: data.isUnlimited,
     history: []
   };
-  selectedTube = null;
-  lastMoveInfo = null;
+  selectedTubeIdx = null;
   isBusy = false;
   saveState();
 
   showView("view-game");
-  renderInGame();
+  renderInGameScreen();
 }
 
-function renderInGame() {
+function renderInGameScreen() {
   const cur = State.cur;
-  $("game-stage-num").textContent = t("stage", { n: cur.level });
+  $("dash-stage-num").textContent = t("stage", { n: cur.level });
 
-  // 난이도 뱃지
-  const badge = $("game-diff-tag");
+  // 난이도 태그 뱃지
+  const badge = $("dash-tier-badge");
   if (State.mainMode === "kid") {
     badge.textContent = "KIDS";
-    badge.style.background = "var(--casual)";
+    badge.style.background = "var(--kid-color)";
   } else {
     badge.textContent = State.adultSub.toUpperCase();
     badge.style.background = State.adultSub === "casual" ? "var(--casual)" : (State.adultSub === "pro" ? "var(--pro)" : "var(--hell)");
   }
 
-  // 이동 횟수
-  $("moves-used-txt").textContent = cur.moves;
+  // 이동 수 카운터
+  $("dash-moves-used").textContent = cur.moves;
   if (cur.isUnlimited) {
-    $("moves-limit-txt").textContent = " (" + t("unlimited") + ")";
-    $("moves-opt-txt").textContent = "";
+    $("dash-moves-limit").textContent = " (" + t("unlimited") + ")";
+    $("dash-opt-txt").textContent = "";
   } else {
-    $("moves-limit-txt").textContent = ` / ${cur.limitMoves}`;
-    $("moves-opt-txt").textContent = t("optMoves", { n: cur.optimalMoves });
+    $("dash-moves-limit").textContent = ` / ${cur.limitMoves}`;
+    $("dash-opt-txt").textContent = t("optimalTxt", { n: cur.optimalMoves });
   }
 
-  // 동물 친구 (어린이 모드)
+  // 어린이 모드 동물 친구
   const isKid = State.mainMode === "kid";
-  $("buddy-box").hidden = !isKid;
+  $("ingame-buddy").hidden = !isKid;
   if (isKid) $("bd").textContent = State.animal;
 
-  // 튜브들 렌더링
-  const wrap = $("tubes-wrap");
-  wrap.innerHTML = "";
+  // 플라스크 캔버스 렌더링
+  const canvas = $("tubes-canvas");
+  canvas.innerHTML = "";
 
   cur.tubes.forEach((tube, idx) => {
-    const tubeEl = document.createElement("div");
+    const flask = document.createElement("div");
     const isCompleted = tube.length === CAPACITY && tube.every(c => c === tube[0]);
-    tubeEl.className = "tube" + (selectedTube === idx ? " sel" : "") + (isCompleted ? " ok full" : "");
-    tubeEl.id = `tube-${idx}`;
+    flask.className = "flask" + (selectedTubeIdx === idx ? " selected" : "") + (isCompleted ? " completed" : "");
+    flask.id = `flask-${idx}`;
 
     tube.forEach(colorIdx => {
       const seg = document.createElement("div");
-      seg.className = "seg";
-      seg.style.background = PASTEL_COLORS[colorIdx];
-      tubeEl.appendChild(seg);
+      seg.className = "liquid-seg";
+      seg.style.background = PASTEL_PALETTE[colorIdx];
+      flask.appendChild(seg);
     });
 
-    tubeEl.onclick = () => onTubeClick(idx);
-    wrap.appendChild(tubeEl);
+    flask.onclick = () => onFlaskClick(idx);
+    canvas.appendChild(flask);
   });
 
   $("btn-undo").disabled = cur.history.length === 0 || isBusy;
 }
 
-function onTubeClick(clickedIdx) {
+function onFlaskClick(clickedIdx) {
   if (isBusy) return;
   const cur = State.cur;
 
-  // 1. 선택된 병이 없을 때
-  if (selectedTube === null) {
+  // 1. 첫 번째 병 선택
+  if (selectedTubeIdx === null) {
     if (cur.tubes[clickedIdx].length > 0) {
-      selectedTube = clickedIdx;
-      playSound("sel");
-      renderInGame();
+      selectedTubeIdx = clickedIdx;
+      playSound("select");
+      renderInGameScreen();
     }
     return;
   }
 
-  // 2. 같은 병 재클릭 시 선택 취소
-  if (selectedTube === clickedIdx) {
-    selectedTube = null;
-    renderInGame();
+  // 2. 같은 병 재클릭 -> 선택 해제
+  if (selectedTubeIdx === clickedIdx) {
+    selectedTubeIdx = null;
+    playSound("click");
+    renderInGameScreen();
     return;
   }
 
   // 3. 부어넣기(Pour) 시도
-  const fromIdx = selectedTube;
+  const fromIdx = selectedTubeIdx;
   const toIdx = clickedIdx;
   const fromT = cur.tubes[fromIdx];
   const toT = cur.tubes[toIdx];
 
   if (canPour(fromT, toT)) {
-    selectedTube = null;
+    selectedTubeIdx = null;
     executePour(fromIdx, toIdx);
   } else {
     if (toT.length > 0) {
-      selectedTube = toIdx;
-      playSound("sel");
-      renderInGame();
+      selectedTubeIdx = toIdx;
+      playSound("select");
+      renderInGameScreen();
     } else {
-      selectedTube = null;
-      renderInGame();
+      selectedTubeIdx = null;
+      renderInGameScreen();
     }
   }
 }
@@ -1195,22 +1647,22 @@ function executePour(fromIdx, toIdx) {
   const space = CAPACITY - toT.length;
   const amount = Math.min(consecutive, space);
 
-  // 물리 틸트 애니메이션
-  const fromEl = $(`tube-${fromIdx}`);
-  const toEl = $(`tube-${toIdx}`);
+  // 상업용 틸트 회전 애니메이션
+  const fromEl = $(`flask-${fromIdx}`);
+  const toEl = $(`flask-${toIdx}`);
   const fromRect = fromEl.getBoundingClientRect();
   const toRect = toEl.getBoundingClientRect();
   const dx = toRect.left - fromRect.left;
   const dy = toRect.top - fromRect.top;
-  const tilt = dx > 0 ? 65 : -65;
-  const offX = dx > 0 ? dx - 36 : dx + 36;
+  const tiltAngle = dx > 0 ? 68 : -68;
+  const offsetX = dx > 0 ? dx - 38 : dx + 38;
 
   fromEl.classList.add("pouring");
-  fromEl.style.transform = `translate(${offX}px, ${dy - 75}px) rotate(${tilt}deg)`;
+  fromEl.style.transform = `translate(${offsetX}px, ${dy - 78}px) rotate(${tiltAngle}deg)`;
   playSound("pour");
 
   setTimeout(() => {
-    // 이동 실행 및 히스토리 기록
+    // 액체 데이터 이동 & 히스토리 적재
     for (let i = 0; i < amount; i++) {
       toT.push(fromT.pop());
     }
@@ -1222,16 +1674,16 @@ function executePour(fromIdx, toIdx) {
       fromEl.classList.remove("pouring");
       isBusy = false;
 
-      const isComplete = toT.length === CAPACITY && toT.every(c => c === toT[0]);
-      if (isComplete) playSound("ding");
+      const isCompleted = toT.length === CAPACITY && toT.every(c => c === toT[0]);
+      if (isCompleted) playSound("complete");
 
-      renderInGame();
-      checkGameEnd();
+      renderInGameScreen();
+      checkGameStatus();
     }, 180);
   }, 260);
 }
 
-function checkGameEnd() {
+function checkGameStatus() {
   const cur = State.cur;
   const isWon = cur.tubes.every(t => t.length === 0 || (t.length === CAPACITY && t.every(c => c === t[0])));
 
@@ -1243,115 +1695,137 @@ function checkGameEnd() {
 
     setTimeout(() => {
       playSound("win");
-      $("win-pet").textContent = State.mainMode === "kid" ? `✨${State.animal}🎉` : "🏆";
-      $("win-title").textContent = State.mainMode === "kid" ? t("kidClear") : t("clear");
-      $("win-msg").textContent = State.mainMode === "kid"
-        ? t("kidMsg")
-        : t("solved", { n: cur.moves, opt: cur.optimalMoves }) + (prev && prev <= cur.moves ? t("keep", { p: prev }) : t("newBest"));
+      const isKid = (State.mainMode === "kid");
+      $("win-badge-icon").textContent = isKid ? `✨${State.animal}🎉` : "🏆";
+      $("win-title-txt").textContent = isKid ? t("kidClearTitle") : t("clearTitle");
+      $("win-desc-txt").textContent = isKid
+        ? t("kidClearMsg")
+        : t("solvedMsg", { moves: cur.moves, opt: cur.optimalMoves });
 
-      $("win-btn-next").onclick = () => {
-        $("modal-win").classList.remove("on");
+      $("win-next-btn").onclick = () => {
+        $("modal-win").classList.remove("active");
         startGame(cur.level + 1);
       };
-      $("win-btn-list").onclick = () => {
-        $("modal-win").classList.remove("on");
+      $("win-home-btn").onclick = () => {
+        $("modal-win").classList.remove("active");
         showHome();
       };
-      $("modal-win").classList.add("on");
-    }, 300);
+      $("modal-win").classList.add("active");
+    }, 320);
     return;
   }
 
-  // 이동 횟수 소진 체크 (어린이 모드가 아닐 때)
+  // 이동 횟수 소진 체크
   if (!cur.isUnlimited && cur.moves >= cur.limitMoves) {
     setTimeout(() => {
       playSound("fail");
-      $("fail-title").textContent = t("failTitle");
-      $("fail-msg").textContent = t("failMsg", { diff: State.adultSub.toUpperCase(), limit: cur.limitMoves });
-      $("fail-btn-retry").onclick = () => {
-        $("modal-fail").classList.remove("on");
+      $("fail-title-txt").textContent = t("failTitle");
+      $("fail-desc-txt").textContent = t("failMsg", { tier: State.adultSub.toUpperCase(), limit: cur.limitMoves });
+      $("fail-retry-btn").onclick = () => {
+        $("modal-fail").classList.remove("active");
         startGame(cur.level);
       };
-      $("fail-btn-mode").onclick = () => {
-        $("modal-fail").classList.remove("on");
+      $("fail-mode-btn").onclick = () => {
+        $("modal-fail").classList.remove("active");
         showView("view-mode");
       };
-      $("modal-fail").classList.add("on");
-    }, 300);
+      $("modal-fail").classList.add("active");
+    }, 320);
   }
 }
 
 /* ==========================================================================
-   이벤트 리스너 및 초기화
+   이벤트 리스너 & 초기화
    ========================================================================== */
 window.addEventListener("DOMContentLoaded", () => {
-  // 1. 다국어 버튼 바
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.onclick = () => {
-      State.lang = btn.dataset.lang;
+  // 1. 글로벌 '뒤로' 버튼
+  $("global-back-btn").onclick = handleGlobalBack;
+
+  // 2. 다국어 세그먼트 버튼
+  document.querySelectorAll(".lang-chip").forEach(chip => {
+    chip.onclick = () => {
+      State.lang = chip.dataset.lang;
       saveState();
+      playSound("click");
       applyLanguage();
-      if (!$("view-home").hidden) renderMap();
-      else if (!$("view-game").hidden) renderInGame();
+      if (currentActiveView === "view-home") renderHomeScreen();
+      else if (currentActiveView === "view-game") renderInGameScreen();
     };
   });
 
-  // 2. 동물 선택 그리드
-  const animals = ["🐰", "🐱", "🐶", "🐻", "🐼", "🦊", "🐯", "🐸", "🐧", "🐨"];
+  // 3. 동물 파트너 선택
+  const animals = ["🐰", "🐱", "🐶", "🐻", "🐼", "🦊", "🐯", "🐸", "🐧", "🐨", "🦁", "🦄"];
   const anGrid = $("animal-grid");
   animals.forEach(a => {
-    const btn = document.createElement("button");
-    btn.className = "an";
-    btn.textContent = a;
-    btn.onclick = () => {
+    const tile = document.createElement("div");
+    tile.className = "animal-tile" + (State.animal === a ? " active" : "");
+    tile.textContent = a;
+    tile.onclick = () => {
       State.animal = a;
       saveState();
+      playSound("click");
+      document.querySelectorAll(".animal-tile").forEach(t => t.classList.toggle("active", t.textContent === a));
       applyLanguage();
-      showHome();
+      // 선택 후 직전 뷰로 부드럽게 복귀
+      setTimeout(() => handleGlobalBack(), 150);
     };
-    anGrid.appendChild(btn);
+    anGrid.appendChild(tile);
   });
 
-  $("avatar-btn").onclick = () => showView("view-pick");
+  $("avatar-trigger-btn").onclick = () => {
+    playSound("click");
+    showView("view-pick");
+  };
 
-  // 3. 모드 카드 이벤트
-  $("card-kid").onclick = () => {
+  // 4. 모드 선택 카드 (어린이 vs 어른)
+  $("card-mode-kid").onclick = () => {
     State.mainMode = "kid";
     saveState();
+    playSound("click");
     applyLanguage();
-    showHome();
+    setTimeout(() => showHome(), 180);
   };
 
-  $("card-adult").onclick = (e) => {
-    // 하위 버튼 클릭 시 이벤트 전파 방지
-    if (e.target.closest(".submode-btn")) return;
+  $("card-mode-adult").onclick = (e) => {
+    // 하위 티어 클릭 시 상위 카드 이벤트 버블링 방지
+    if (e.target.closest(".tier-box")) return;
     State.mainMode = "adult";
     saveState();
+    playSound("click");
     applyLanguage();
-    showHome();
+    setTimeout(() => showHome(), 180);
   };
 
-  // 4. 어른 모드 3단계 하위 난이도 버튼
-  document.querySelectorAll(".submode-btn").forEach(btn => {
-    btn.onclick = (e) => {
+  // 5. 어른 모드 3단계 하위 난이도 티어 버튼
+  document.querySelectorAll(".tier-box").forEach(box => {
+    box.onclick = (e) => {
       e.stopPropagation();
-      document.querySelectorAll(".submode-btn").forEach(b => b.classList.remove("on"));
-      btn.classList.add("on");
       State.mainMode = "adult";
-      State.adultSub = btn.dataset.sub;
+      State.adultSub = box.dataset.sub;
       saveState();
+      playSound("click");
       applyLanguage();
-      showHome();
+      setTimeout(() => showHome(), 180);
     };
   });
 
-  // 5. 홈 & 인게임 버튼들
-  $("change-mode-btn").onclick = () => showView("view-mode");
-  $("resume-btn").onclick = () => {
-    if (State.cur) startGame(State.cur.level);
-    else startGame(1);
+  // 6. 홈 & 인게임 버튼
+  $("home-change-mode-btn").onclick = () => {
+    playSound("click");
+    showView("view-mode");
   };
-  $("btn-back").onclick = showHome;
+  $("home-play-btn").onclick = () => {
+    playSound("click");
+    const cleared = getClearedData();
+    let currentStage = 1;
+    while (currentStage <= TOTAL_STAGES && cleared[currentStage]) currentStage++;
+    startGame(currentStage);
+  };
+
+  $("game-back-to-home-btn").onclick = () => {
+    playSound("click");
+    showHome();
+  };
 
   $("btn-undo").onclick = () => {
     const cur = State.cur;
@@ -1361,9 +1835,9 @@ window.addEventListener("DOMContentLoaded", () => {
       cur.tubes[last.from].push(cur.tubes[last.to].pop());
     }
     cur.moves = Math.max(0, cur.moves - 1);
-    selectedTube = null;
+    selectedTubeIdx = null;
     playSound("undo");
-    renderInGame();
+    renderInGameScreen();
   };
 
   $("btn-sound").onclick = () => {
@@ -1373,10 +1847,13 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   $("btn-restart").onclick = () => {
-    if (State.cur) startGame(State.cur.level);
+    if (State.cur) {
+      playSound("click");
+      startGame(State.cur.level);
+    }
   };
 
-  // 초기 시작
+  // 초기 시작 화면 구성
   applyLanguage();
   showHome();
 });
