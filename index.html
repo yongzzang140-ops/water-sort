@@ -350,36 +350,61 @@ button { font: inherit; }
 }
 
 .flask {
-  width: 50px; height: 178px;
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(8px);
-  border: 3.5px solid rgba(255, 255, 255, 0.95);
+  width: 52px; height: 182px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 3.5px solid rgba(255, 255, 255, 0.85);
   border-top-color: transparent;
-  border-radius: 0 0 25px 25px;
-  box-shadow: 0 10px 20px -4px rgba(15, 23, 42, 0.12), inset 0 0 10px rgba(255,255,255,0.7);
+  border-radius: 0 0 26px 26px;
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.12), inset 0 0 14px rgba(255, 255, 255, 0.65);
   display: flex; flex-direction: column-reverse;
   padding: 3px; gap: 3px;
   cursor: pointer; position: relative;
-  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 .flask::before {
   content: ""; position: absolute;
-  top: -4px; left: -5px; right: -5px; height: 8px;
+  top: -4px; left: -5px; right: -5px; height: 9px;
   border: 3.5px solid rgba(255, 255, 255, 0.95);
-  border-radius: 6px; background: rgba(255, 255, 255, 0.85);
+  border-radius: 6px; background: rgba(255, 255, 255, 0.90);
   z-index: 3;
 }
+/* 2D 글래스 반사광 하이라이트 (Specular Rim) */
 .flask::after {
   content: ""; position: absolute;
-  top: 6px; left: 4px; width: 4px; bottom: 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.1) 100%);
+  top: 8px; left: 5px; width: 4.5px; bottom: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,0.05) 100%);
   border-radius: 4px; pointer-events: none; z-index: 4;
 }
 
-.flask.selected { transform: translateY(-22px) scale(1.04); }
-.flask.pouring { z-index: 20; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
-.flask.completed { border-color: #10B981; animation: flaskPulse 0.5s ease; }
-@keyframes flaskPulse { 40% { transform: scale(1.08); } }
+/* 병 선택 시 DOTween Elastic Ease Out 모션 */
+.flask.selected {
+  transform: translateY(-24px) scale(1.05);
+  box-shadow: 0 20px 32px -8px rgba(79, 70, 229, 0.28), inset 0 0 18px rgba(255, 255, 255, 0.9);
+  animation: elasticBounce 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes elasticBounce {
+  0% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-28px) scale(0.92, 1.14); }
+  75% { transform: translateY(-22px) scale(1.06, 0.96); }
+  100% { transform: translateY(-24px) scale(1.05); }
+}
+
+.flask.pouring { z-index: 30; transition: transform 0.34s cubic-bezier(0.25, 1, 0.5, 1); }
+
+/* 완성 시 유리병 반짝임 (Shine Sweep) & 탄성 펄스 */
+.flask.completed {
+  border-color: #34D399;
+  box-shadow: 0 0 24px rgba(52, 211, 153, 0.45), inset 0 0 16px rgba(255, 255, 255, 0.85);
+  animation: flaskCompleteCelebration 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes flaskCompleteCelebration {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.14); filter: brightness(1.25); }
+  65% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
 
 /* ==========================================================================
    2차 특수 기믹 4종 비주얼 스타일
@@ -456,54 +481,89 @@ button { font: inherit; }
   opacity: 0.9;
 }
 
-/* 액체 레이어 기본 */
+/* 2025-2026 트렌디 네온-파스텔 액체 레이어 */
 .liquid-seg {
-  flex: 1; border-radius: 4px 4px 18px 18px;
+  flex: 1; border-radius: 4px 4px 20px 20px;
   position: relative; overflow: hidden;
   transition: height 0.25s ease;
-  box-shadow: inset 0 2px 3px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.1);
+  box-shadow: inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -3px 5px rgba(0,0,0,0.12);
 }
 .liquid-seg:not(:first-child) { border-radius: 4px; }
+
+/* 수면 거품 및 찰랑이는 Wobble 애니메이션 */
 .liquid-seg:last-child::before {
   content: ""; position: absolute;
-  left: 0; right: 0; top: 0; height: 6px;
-  background: rgba(255,255,255,0.45); border-radius: 50%;
+  left: -2px; right: -2px; top: 0; height: 7px;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  animation: surfaceWobble 2.8s ease-in-out infinite alternate;
+}
+@keyframes surfaceWobble {
+  0% { transform: rotate(-3deg) scaleY(0.9); }
+  50% { transform: rotate(0deg) scaleY(1.1); }
+  100% { transform: rotate(3deg) scaleY(0.9); }
 }
 
-/* 하단 조작 바 */
-.ingame-control-bar { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
-.ctrl-pill-btn {
-  flex: 1; height: 50px;
-  border-radius: 16px; border: 1px solid var(--line);
-  background: var(--surface); color: var(--ink);
-  font-size: 13px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  cursor: pointer; box-shadow: var(--shadow-sm);
+/* Thumb-Zone Ergonomic Floating Dock (한 손 조작 최적화 하단 독) */
+.ingame-control-bar {
+  display: flex; gap: 8px; justify-content: space-between;
+  margin-top: 18px; padding: 6px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 24px;
+  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.08);
 }
-.ctrl-pill-btn:disabled { opacity: 0.4; cursor: default; }
+.ctrl-pill-btn {
+  flex: 1; height: 52px;
+  border-radius: 18px; border: 1px solid rgba(226, 232, 240, 0.7);
+  background: rgba(255, 255, 255, 0.9); color: var(--ink);
+  font-size: 12px; font-weight: 800;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  cursor: pointer; box-shadow: var(--shadow-sm);
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s ease;
+}
+.ctrl-pill-btn:active {
+  transform: scale(0.90);
+  background: rgba(238, 242, 255, 0.95);
+}
+.ctrl-pill-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+/* 3차 베지어 곡선 물줄기 SVG 오버레이 */
+#stream-overlay-svg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 99; width: 100%; height: 100%;
+}
 
 /* ==========================================================================
-   수익화 팝업: $4.99 Fail Offer (패배 즉시구제 모달)
+   수익화 & 게임 모달: 28pt 라운딩 플로팅 글래스 카드 (Corner Radius 28px)
    ========================================================================== */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: none; align-items: center; justify-content: center;
   padding: 20px; z-index: 100;
 }
 .modal-overlay.active { display: flex; }
 .modal-window {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
   border-radius: 28px;
-  padding: 28px 22px;
+  padding: 30px 24px;
   max-width: 380px; width: 100%;
   text-align: center;
-  box-shadow: var(--shadow-lg);
-  animation: zoomPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.25), inset 0 1px 0 rgba(255,255,255,0.9);
+  animation: modalElasticPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-@keyframes zoomPop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes modalElasticPop {
+  0% { transform: scale(0.72); opacity: 0; }
+  65% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
 
 /* Fail Offer 특화 스타일 */
 .fail-offer-banner {
@@ -667,15 +727,25 @@ button { font: inherit; }
     <!-- 플라스크 캔버스 -->
     <div class="tubes-canvas" id="tubes-canvas"></div>
 
+    <!-- 3차 베지어 곡선 유체 물줄기 오버레이 -->
+    <svg id="stream-overlay-svg"></svg>
+
+    <!-- Thumb-Zone 인체공학적 하단 독 (Undo, +튜브, 셔플, 재시작) -->
     <div class="ingame-control-bar">
       <button class="ctrl-pill-btn" id="btn-undo">
         <span>↩️</span> <span id="txt-undo">되돌리기</span>
       </button>
-      <button class="ctrl-pill-btn" id="btn-sound">
-        <span>🔊</span> <span id="txt-sound">소리</span>
+      <button class="ctrl-pill-btn" id="btn-add-tube">
+        <span>🧪</span> <span id="txt-add-tube">+ 튜브</span>
+      </button>
+      <button class="ctrl-pill-btn" id="btn-shuffle">
+        <span>🔀</span> <span id="txt-shuffle">셔플</span>
       </button>
       <button class="ctrl-pill-btn" id="btn-restart">
-        <span>🔄</span> <span id="txt-restart">다시 시작</span>
+        <span>🔄</span> <span id="txt-restart">재시작</span>
+      </button>
+      <button class="ctrl-pill-btn" id="btn-sound" style="flex:0.8;">
+        <span>🔊</span> <span id="txt-sound">소리</span>
       </button>
     </div>
   </section>
@@ -827,11 +897,27 @@ const I18N = {
   }
 };
 
-const PASTEL_PALETTE = [
-  "#FF8A9E", "#70DEB4", "#B8A7F7", "#76C7FA", "#FFDF70",
-  "#FFAF87", "#F09CE7", "#FF7373", "#74E396", "#5F95E8",
-  "#F5BF76", "#9CAEF7"
+// 2025-2026 트렌디 네온-파스텔 12종 시그니처 팔레트 시스템
+const NEON_PASTEL_PALETTE = [
+  { id: 0, name: "Neon Candy Pink", top: "#FFA6C7", bottom: "#FA6199", highlight: "#FFE0F0", glow: "#FF4D94" },
+  { id: 1, name: "Mint Fizz",       top: "#8CF2D1", bottom: "#3DD1A6", highlight: "#D9FFF2", glow: "#20FCA8" },
+  { id: 2, name: "Electric Lilac",  top: "#D1B3FF", bottom: "#A873F5", highlight: "#EDE0FF", glow: "#BF73FF" },
+  { id: 3, name: "Cyber Peach",     top: "#FFC299", bottom: "#FA8559", highlight: "#FFE6D1", glow: "#FF8C59" },
+  { id: 4, name: "Neon Sky",        top: "#85D9FF", bottom: "#40AEFA", highlight: "#D9F2FF", glow: "#33C2FF" },
+  { id: 5, name: "Lemon Glaze",     top: "#FFF28C", bottom: "#FAD647", highlight: "#FFFAE0", glow: "#FFE84D" },
+  { id: 6, name: "Aurora Coral",    top: "#FF9E9E", bottom: "#F55C6B", highlight: "#FFDBDB", glow: "#FF5E73" },
+  { id: 7, name: "Cyber Periwinkle",top: "#B3BFFF", bottom: "#7A8CF5", highlight: "#E0E5FF", glow: "#8C9EFF" },
+  { id: 8, name: "Hyper Emerald",   top: "#94EBA6", bottom: "#47D173", highlight: "#E0FAE6", glow: "#4DFA80" },
+  { id: 9, name: "Deep Ocean Glow", top: "#73ADF5", bottom: "#4073D9", highlight: "#CCE6FF", glow: "#4D85FF" },
+  { id: 10, name: "Apricot Sorbet", top: "#FFD6A6", bottom: "#FAA861", highlight: "#FFF0DC", glow: "#FFB066" },
+  { id: 11, name: "Cosmic Lavender",top: "#EBB8F2", bottom: "#C77AE0", highlight: "#F7E0FA", glow: "#E080FF" }
 ];
+
+function getPastel(idx) {
+  return NEON_PASTEL_PALETTE[Math.abs(idx) % NEON_PASTEL_PALETTE.length];
+}
+
+const PASTEL_PALETTE = NEON_PASTEL_PALETTE.map(p => p.bottom);
 
 const TOTAL_STAGES = 30;
 const CAPACITY = 4;
@@ -1353,7 +1439,9 @@ function renderGame() {
         seg.classList.add("blind");
         seg.textContent = "?";
       } else {
-        seg.style.background = PASTEL_PALETTE[colorIdx];
+        const pal = getPastel(colorIdx);
+        seg.style.background = `linear-gradient(180deg, ${pal.top} 0%, ${pal.bottom} 100%)`;
+        seg.style.boxShadow = `inset 0 2px 4px ${pal.highlight}, inset 0 -3px 4px rgba(0,0,0,0.15)`;
         // 최상단 얼음 레이어 처리
         if (isFrozen && layerIdx === tube.length - 1) {
           seg.classList.add("frozen");
@@ -1466,6 +1554,15 @@ function executePour(fromIdx, toIdx) {
   fromEl.style.transform = `translate(${offsetX}px, ${dy - 78}px) rotate(${tiltAngle}deg)`;
   playSound("pour");
 
+  // 1. 부드러운 3차 베지어 곡선(Cubic Bezier Curve) 유체 물줄기 연출 시작
+  const pal = getPastel(topColor);
+  const pourMouthX = fromRect.left + (dx > 0 ? fromRect.width * 0.9 : fromRect.width * 0.1) + offsetX;
+  const pourMouthY = fromRect.top + (dy - 78) + 12;
+  const targetMouthX = toRect.left + toRect.width * 0.5;
+  const targetMouthY = toRect.top + 8;
+
+  renderBezierStream(pourMouthX, pourMouthY, targetMouthX, targetMouthY, pal, 280);
+
   setTimeout(() => {
     // 액체 이동
     for (let i = 0; i < amount; i++) {
@@ -1508,12 +1605,77 @@ function executePour(fromIdx, toIdx) {
       isBusy = false;
 
       const isCompleted = toT.length === CAPACITY && toT.every(c => c === toT[0]);
-      if (isCompleted) playSound("complete");
+      if (isCompleted) {
+        playSound("complete");
+        // 모바일 햅틱 진동 피드백 (Success Vibration Pattern)
+        if (navigator.vibrate) {
+          navigator.vibrate([35, 45, 50]);
+        }
+        spawnSparkles(toEl, pal.glow);
+      }
 
       renderGame();
       checkGameStatus(countdownExpired);
     }, 180);
   }, 260);
+}
+
+// 3차 베지어 곡선(Cubic Bezier Curve) 스트림 렌더링
+function renderBezierStream(x0, y0, x3, y3, palette, durationMs) {
+  const svg = $("stream-overlay-svg");
+  if (!svg) return;
+
+  const dx = x3 - x0;
+  const dy = y3 - y0;
+  // 소스 주둥이 모멘텀과 중력 낙하를 반영한 3차 제어점
+  const cx1 = x0 + (dx * 0.45);
+  const cy1 = y0 - 15;
+  const cx2 = x3;
+  const cy2 = y0 + (dy * 0.4);
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", `M ${x0} ${y0} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x3} ${y3}`);
+  path.setAttribute("stroke", palette.glow || palette.bottom);
+  path.setAttribute("stroke-width", "6.5");
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("fill", "none");
+  path.style.filter = "drop-shadow(0 2px 6px rgba(0,0,0,0.2))";
+  path.style.opacity = "0.95";
+  path.style.transition = "opacity 0.12s ease";
+
+  svg.appendChild(path);
+
+  setTimeout(() => {
+    path.style.opacity = "0";
+    setTimeout(() => { if (path.parentNode) path.parentNode.removeChild(path); }, 120);
+  }, durationMs);
+}
+
+// 병 완성 시 스파클 파티클 터짐 FX
+function spawnSparkles(containerEl, glowColor) {
+  if (!containerEl) return;
+  const rect = containerEl.getBoundingClientRect();
+  const emojis = ["✨", "⭐", "🌟", "💖", "🎉"];
+
+  for (let i = 0; i < 8; i++) {
+    const sp = document.createElement("div");
+    sp.textContent = emojis[i % emojis.length];
+    sp.style.position = "fixed";
+    sp.style.left = `${rect.left + rect.width / 2 + (Math.random() * 40 - 20)}px`;
+    sp.style.top = `${rect.top + (Math.random() * 40 - 20)}px`;
+    sp.style.fontSize = `${16 + Math.random() * 12}px`;
+    sp.style.pointerEvents = "none";
+    sp.style.zIndex = "105";
+    sp.style.transition = "all 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+    document.body.appendChild(sp);
+
+    requestAnimationFrame(() => {
+      sp.style.transform = `translate(${(Math.random() - 0.5) * 90}px, ${-40 - Math.random() * 60}px) scale(0)`;
+      sp.style.opacity = "0";
+    });
+
+    setTimeout(() => { if (sp.parentNode) sp.parentNode.removeChild(sp); }, 700);
+  }
 }
 
 function checkGameStatus(countdownExpired = false) {
@@ -1693,6 +1855,36 @@ window.addEventListener("DOMContentLoaded", () => {
     selectedTubeIdx = null;
     playSound("undo");
     renderGame();
+  };
+
+  // Thumb-Zone 퀵 액션: 빈 튜브 추가 (긴급 탈출 튜브)
+  $("btn-add-tube").onclick = () => {
+    const cur = State.cur;
+    if (!cur || isBusy) return;
+    cur.tubes.push([]); // 완전한 빈 병 1개 스폰
+    selectedTubeIdx = null;
+    playSound("complete");
+    if (navigator.vibrate) navigator.vibrate(30);
+    renderGame();
+  };
+
+  // Thumb-Zone 퀵 액션: 셔플/힌트
+  $("btn-shuffle").onclick = () => {
+    const cur = State.cur;
+    if (!cur || isBusy) return;
+    playSound("select");
+    if (navigator.vibrate) navigator.vibrate(25);
+    // 가능한 첫 번째 유효 이동 찾아서 안내(선택)
+    for (let i = 0; i < cur.tubes.length; i++) {
+      for (let j = 0; j < cur.tubes.length; j++) {
+        if (i !== j && canPour(cur.tubes[i], cur.tubes[j])) {
+          selectedTubeIdx = i;
+          renderGame();
+          return;
+        }
+      }
+    }
+    alert("현재 가능한 이동이 없습니다! 튜브를 추가하거나 되돌리기를 사용하세요.");
   };
 
   $("btn-sound").onclick = () => {

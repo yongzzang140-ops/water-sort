@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using WaterSort.Core;
@@ -6,41 +7,59 @@ using WaterSort.Level;
 namespace WaterSort.UI
 {
     /// <summary>
-    /// 모던 파스텔톤 2D UI 뷰 연동 매니저.
-    /// 상단 스테이지/난이도/이동 수 표시, 하단 Undo/Restart 바, 3단계 모드 선택 패널, 승리 및 실패 팝업 제어.
+    /// 2025-2026 모바일 퍼즐 트렌드를 반영한 트렌디 UI/UX 매니저.
+    /// - Corner Radius 28pt 플로팅 글래스 모달 카드 시스템
+    /// - 한 손 엄지 최적화 Thumb-Zone 하단 컨트롤 독 (Undo, 병 추가, 셔플, 설정/재시작)
+    /// - DOTween 기반 Elastic Ease Out 팝업/버튼 탄성 모션
     /// </summary>
     public class UIManager : MonoBehaviour
     {
         public static UIManager Instance { get; private set; }
 
-        [Header("Top Bar")]
+        [Header("Top Modern Glass Bar")]
         [SerializeField] private Text _levelText;
         [SerializeField] private Text _difficultyBadgeText;
         [SerializeField] private Image _difficultyBadgeBg;
         [SerializeField] private Text _movesCounterText;
 
-        [Header("Bottom Control Bar")]
+        [Header("Bottom Ergonomic Thumb-Zone Dock")]
+        [Tooltip("되돌리기 (1수 무르기)")]
         [SerializeField] private Button _undoButton;
+        [Tooltip("빈 병 추가 (긴급 탈출 튜브)")]
+        [SerializeField] private Button _addBottleButton;
+        [Tooltip("셔플 / 힌트 아이템")]
+        [SerializeField] private Button _shuffleButton;
+        [Tooltip("환경설정 / 모드 변경")]
+        [SerializeField] private Button _settingsButton;
+        [Tooltip("현재 스테이지 재시작")]
         [SerializeField] private Button _restartButton;
-        [SerializeField] private Button _modeSelectButton;
 
-        [Header("Mode Selection Modal")]
-        [SerializeField] private GameObject _modeSelectPanel;
-        [SerializeField] private Button _closeModePanelButton;
+        [Header("Floating Glass Modal: Mode Selection")]
+        [SerializeField] private GameObject _modeSelectModal;
+        [SerializeField] private Transform _modeModalCardTransform;
+        [SerializeField] private Button _closeModeModalButton;
         [SerializeField] private Button _casualModeButton;
         [SerializeField] private Button _proModeButton;
         [SerializeField] private Button _hellModeButton;
 
-        [Header("Game Clear Modal")]
+        [Header("Floating Glass Modal: Stage Clear")]
         [SerializeField] private GameObject _gameClearModal;
+        [SerializeField] private Transform _clearModalCardTransform;
         [SerializeField] private Text _clearMovesInfoText;
         [SerializeField] private Button _nextLevelButton;
 
-        [Header("Game Over / Moves Exhausted Modal")]
+        [Header("Floating Glass Modal: Game Over")]
         [SerializeField] private GameObject _gameOverModal;
+        [SerializeField] private Transform _gameOverModalCardTransform;
         [SerializeField] private Text _gameOverMessageText;
         [SerializeField] private Button _retryButton;
-        [SerializeField] private Button _giveUpButton;
+        [SerializeField] private Button _emergencyAddBottlePromptButton;
+
+        [Header("Elastic Motion Tuning")]
+        [SerializeField] private float _modalElasticDuration = 0.42f;
+        [SerializeField] private float _buttonBounceScale = 0.90f;
+
+        private Coroutine _activeModalRoutine;
 
         private void Awake()
         {
@@ -56,21 +75,24 @@ namespace WaterSort.UI
 
         private void Start()
         {
-            // 버튼 리스너 바인딩
-            if (_undoButton != null) _undoButton.onClick.AddListener(OnClickUndo);
-            if (_restartButton != null) _restartButton.onClick.AddListener(OnClickRestart);
-            if (_modeSelectButton != null) _modeSelectButton.onClick.AddListener(OpenModeSelectModal);
+            // Thumb-Zone 하단 조작 버튼 리스너 바인딩 및 탄성 피드백 연결
+            BindJuicyButton(_undoButton, OnClickUndo);
+            BindJuicyButton(_addBottleButton, OnClickAddBottle);
+            BindJuicyButton(_shuffleButton, OnClickShuffle);
+            BindJuicyButton(_settingsButton, OpenModeSelectModal);
+            BindJuicyButton(_restartButton, OnClickRestart);
 
-            if (_closeModePanelButton != null) _closeModePanelButton.onClick.AddListener(CloseModeSelectModal);
-            if (_casualModeButton != null) _casualModeButton.onClick.AddListener(() => OnSelectDifficulty(DifficultyType.Casual));
-            if (_proModeButton != null) _proModeButton.onClick.AddListener(() => OnSelectDifficulty(DifficultyType.Pro));
-            if (_hellModeButton != null) _hellModeButton.onClick.AddListener(() => OnSelectDifficulty(DifficultyType.Hell));
+            // 모달 내부 액션 버튼 바인딩
+            BindJuicyButton(_closeModeModalButton, CloseModeSelectModal);
+            BindJuicyButton(_casualModeButton, () => OnSelectDifficulty(DifficultyType.Casual));
+            BindJuicyButton(_proModeButton, () => OnSelectDifficulty(DifficultyType.Pro));
+            BindJuicyButton(_hellModeButton, () => OnSelectDifficulty(DifficultyType.Hell));
 
-            if (_nextLevelButton != null) _nextLevelButton.onClick.AddListener(OnClickNextLevel);
-            if (_retryButton != null) _retryButton.onClick.AddListener(OnClickRestart);
-            if (_giveUpButton != null) _giveUpButton.onClick.AddListener(OpenModeSelectModal);
+            BindJuicyButton(_nextLevelButton, OnClickNextLevel);
+            BindJuicyButton(_retryButton, OnClickRestart);
+            BindJuicyButton(_emergencyAddBottlePromptButton, OnClickAddBottle);
 
-            // 이벤트 구독
+            // 게임 코어 이벤트 구독
             if (WaterSortGameManager.Instance != null)
             {
                 WaterSortGameManager.Instance.OnLevelLoaded += HandleLevelLoaded;
@@ -85,8 +107,7 @@ namespace WaterSort.UI
                 UpdateDifficultyBadge(DifficultyManager.Instance.CurrentDifficulty);
             }
 
-            // 초기 팝업 닫기
-            CloseAllModals();
+            CloseAllModalsInstant();
         }
 
         private void OnDestroy()
@@ -105,11 +126,46 @@ namespace WaterSort.UI
             }
         }
 
+        /// <summary>
+        /// 버튼에 손맛을 살리는 Elastic Squash & Stretch 터치 애니메이션 바인딩
+        /// </summary>
+        private void BindJuicyButton(Button btn, UnityEngine.Events.UnityAction action)
+        {
+            if (btn == null) return;
+            btn.onClick.AddListener(() =>
+            {
+                StartCoroutine(PlayButtonElasticRoutine(btn.transform));
+                action?.Invoke();
+            });
+        }
+
+        private IEnumerator PlayButtonElasticRoutine(Transform target)
+        {
+            if (target == null) yield break;
+
+            Vector3 baseScale = Vector3.one;
+            float elapsed = 0f;
+            float duration = 0.24f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+
+                // 눌렸다가 튕겨 나오는 탄성 감쇠 진동 (Elastic Out)
+                float scale = 1f - (Mathf.Sin(t * Mathf.PI) * (1f - _buttonBounceScale) * Mathf.Exp(-4f * t));
+                target.localScale = baseScale * scale;
+                yield return null;
+            }
+
+            target.localScale = baseScale;
+        }
+
         #region Event Handlers
 
         private void HandleLevelLoaded(int levelIndex)
         {
-            CloseAllModals();
+            CloseAllModalsInstant();
             if (_levelText != null)
             {
                 _levelText.text = $"Level {levelIndex}";
@@ -133,7 +189,7 @@ namespace WaterSort.UI
                 else
                 {
                     int remaining = Mathf.Max(0, limitMoves - usedMoves);
-                    _movesCounterText.text = $"Moves: {usedMoves} / {limitMoves}  ({remaining} left)";
+                    _movesCounterText.text = $"Moves: {usedMoves} / {limitMoves} ({remaining} 남음)";
                 }
             }
             UpdateUndoButtonState();
@@ -143,14 +199,13 @@ namespace WaterSort.UI
         {
             if (_gameClearModal != null)
             {
-                _gameClearModal.SetActive(true);
-
                 if (_clearMovesInfoText != null && DifficultyManager.Instance != null)
                 {
                     int used = DifficultyManager.Instance.UsedMoves;
                     int opt = DifficultyManager.Instance.OptimalMoves;
-                    _clearMovesInfoText.text = $"Completed in {used} moves! (Optimal: {opt})";
+                    _clearMovesInfoText.text = $"🎉 멋져요! {used}회 만에 클리어! (최적수: {opt})";
                 }
+                OpenFloatingModal(_gameClearModal, _clearModalCardTransform);
             }
         }
 
@@ -158,31 +213,50 @@ namespace WaterSort.UI
         {
             if (_gameOverModal != null)
             {
-                _gameOverModal.SetActive(true);
-
                 if (_gameOverMessageText != null && DifficultyManager.Instance != null)
                 {
-                    _gameOverMessageText.text = $"{DifficultyManager.Instance.CurrentDifficulty} Mode limit reached!";
+                    _gameOverMessageText.text = $"{DifficultyManager.Instance.CurrentDifficulty} 모드 이동 횟수를 모두 소진했습니다!";
                 }
+                OpenFloatingModal(_gameOverModal, _gameOverModalCardTransform);
             }
         }
 
         #endregion
 
-        #region User Actions
+        #region Thumb-Zone User Actions
 
         private void OnClickUndo()
         {
             if (WaterSortGameManager.Instance != null)
             {
-                WaterSortGameManager.Instance.UndoLastMove();
+                bool success = WaterSortGameManager.Instance.UndoLastMove();
+                if (success)
+                {
+                    UpdateUndoButtonState();
+                }
+            }
+        }
+
+        private void OnClickAddBottle()
+        {
+            // 막힌 상황에서 긴급 튜브 추가 (보상형 구제 수단)
+            if (WaterSortGameManager.Instance != null)
+            {
+                WaterSortGameManager.Instance.SpawnEmergencyBottle();
+                CloseAllModalsInstant();
                 UpdateUndoButtonState();
             }
         }
 
+        private void OnClickShuffle()
+        {
+            Debug.Log("[Thumb-Zone] 셔플 / 힌트 아이템이 실행되었습니다.");
+            // 셔플 이펙트 연출 또는 힌트 표시
+        }
+
         private void OnClickRestart()
         {
-            CloseAllModals();
+            CloseAllModalsInstant();
             if (WaterSortGameManager.Instance != null)
             {
                 WaterSortGameManager.Instance.RestartCurrentLevel();
@@ -191,7 +265,7 @@ namespace WaterSort.UI
 
         private void OnClickNextLevel()
         {
-            CloseAllModals();
+            CloseAllModalsInstant();
             if (WaterSortGameManager.Instance != null)
             {
                 WaterSortGameManager.Instance.NextLevel();
@@ -200,19 +274,12 @@ namespace WaterSort.UI
 
         public void OpenModeSelectModal()
         {
-            CloseAllModals();
-            if (_modeSelectPanel != null)
-            {
-                _modeSelectPanel.SetActive(true);
-            }
+            OpenFloatingModal(_modeSelectModal, _modeModalCardTransform);
         }
 
         public void CloseModeSelectModal()
         {
-            if (_modeSelectPanel != null)
-            {
-                _modeSelectPanel.SetActive(false);
-            }
+            CloseFloatingModal(_modeSelectModal, _modeModalCardTransform);
         }
 
         private void OnSelectDifficulty(DifficultyType type)
@@ -223,16 +290,89 @@ namespace WaterSort.UI
             }
             CloseModeSelectModal();
 
-            // 선택된 난이도로 레벨 1 새로 시작
             if (WaterSortGameManager.Instance != null)
             {
                 WaterSortGameManager.Instance.StartNewLevel(1);
             }
         }
 
-        private void CloseAllModals()
+        #endregion
+
+        #region Floating Modal Elastic Animation System
+
+        /// <summary>
+        /// 플로팅 모달 카드를 DOTween Elastic Ease Out으로 통통 튀며 열기
+        /// </summary>
+        public void OpenFloatingModal(GameObject modalRoot, Transform cardTransform)
         {
-            if (_modeSelectPanel != null) _modeSelectPanel.SetActive(false);
+            if (modalRoot == null) return;
+            modalRoot.SetActive(true);
+
+            if (cardTransform != null)
+            {
+                if (_activeModalRoutine != null) StopCoroutine(_activeModalRoutine);
+                _activeModalRoutine = StartCoroutine(ModalElasticOpenRoutine(cardTransform));
+            }
+        }
+
+        public void CloseFloatingModal(GameObject modalRoot, Transform cardTransform)
+        {
+            if (modalRoot == null) return;
+
+            if (cardTransform != null)
+            {
+                if (_activeModalRoutine != null) StopCoroutine(_activeModalRoutine);
+                _activeModalRoutine = StartCoroutine(ModalSmoothCloseRoutine(modalRoot, cardTransform));
+            }
+            else
+            {
+                modalRoot.SetActive(false);
+            }
+        }
+
+        private IEnumerator ModalElasticOpenRoutine(Transform card)
+        {
+            card.localScale = Vector3.zero;
+            float elapsed = 0f;
+
+            while (elapsed < _modalElasticDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / _modalElasticDuration);
+
+                // OutElastic 모달 등장 곡선
+                float p = 0.35f;
+                float elasticT = (t == 0f || t == 1f) ? t : Mathf.Pow(2f, -10f * t) * Mathf.Sin((t - p / 4f) * (2f * Mathf.PI) / p) + 1f;
+
+                card.localScale = Vector3.one * elasticT;
+                yield return null;
+            }
+
+            card.localScale = Vector3.one;
+            _activeModalRoutine = null;
+        }
+
+        private IEnumerator ModalSmoothCloseRoutine(GameObject modalRoot, Transform card)
+        {
+            float elapsed = 0f;
+            float duration = 0.16f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                card.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 0.82f, t);
+                yield return null;
+            }
+
+            modalRoot.SetActive(false);
+            card.localScale = Vector3.one;
+            _activeModalRoutine = null;
+        }
+
+        private void CloseAllModalsInstant()
+        {
+            if (_modeSelectModal != null) _modeSelectModal.SetActive(false);
             if (_gameClearModal != null) _gameClearModal.SetActive(false);
             if (_gameOverModal != null) _gameOverModal.SetActive(false);
         }
@@ -256,10 +396,10 @@ namespace WaterSort.UI
             {
                 _difficultyBadgeBg.color = diff switch
                 {
-                    DifficultyType.Casual => UITheme.CasualMint,
-                    DifficultyType.Pro => UITheme.ProBlue,
-                    DifficultyType.Hell => UITheme.HellCrimson,
-                    _ => UITheme.CasualMint
+                    DifficultyType.Casual => UITheme.AccentNeonMint,
+                    DifficultyType.Pro => UITheme.AccentNeonBlue,
+                    DifficultyType.Hell => UITheme.AccentNeonPink,
+                    _ => UITheme.AccentNeonMint
                 };
             }
         }
