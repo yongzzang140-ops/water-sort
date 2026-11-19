@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Water Sort - Ultimate Commercial Edition</title>
+<title>Water Sort - Phase 2 Commercial Edition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+KR:wght@500;700;900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
@@ -13,7 +13,6 @@
   --primary-light: #EEF2FF;
   --bg-gradient: linear-gradient(180deg, #F0F4F8 0%, #E2E8F0 100%);
   --surface: rgba(255, 255, 255, 0.95);
-  --surface-blur: blur(16px);
   --ink: #1E293B;
   --ink-secondary: #64748B;
   --line: #E2E8F0;
@@ -28,9 +27,8 @@
   --kid-bg: #FFFBEB;
 
   --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 8px 16px -4px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-  --shadow-glass: inset 0 1px 2px rgba(255,255,255,0.8), 0 12px 24px -4px rgba(79, 70, 229, 0.08);
+  --shadow-md: 0 8px 16px -4px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.12);
 
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
@@ -40,11 +38,10 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg-gradient: linear-gradient(180deg, #0F172A 0%, #020617 100%);
-    --surface: rgba(30, 41, 59, 0.92);
+    --surface: rgba(30, 41, 59, 0.94);
     --ink: #F8FAFC;
     --ink-secondary: #94A3B8;
     --line: #334155;
-    --shadow-glass: inset 0 1px 1px rgba(255,255,255,0.1), 0 12px 24px -4px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -64,7 +61,7 @@ body {
 main {
   width: 100%;
   max-width: 480px;
-  padding: 16px 18px 30px;
+  padding: 16px 18px 28px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -75,7 +72,7 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   gap: 8px;
 }
 
@@ -88,11 +85,11 @@ main {
   color: var(--ink);
   font-size: 13px;
   font-weight: 700;
-  padding: 8px 14px;
+  padding: 7px 14px;
   border-radius: 999px;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.15s ease;
 }
 .back-nav-btn:active { transform: scale(0.95); }
 
@@ -122,41 +119,29 @@ main {
 }
 
 .avatar-badge-btn {
-  width: 40px;
-  height: 40px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   border: 2px solid var(--line);
   background: var(--surface);
   font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.avatar-badge-btn:active { transform: scale(0.92); }
 
 /* 상업용 헤더 타이틀 */
-.page-title-wrap {
-  margin: 10px 0 16px;
-}
+.page-title-wrap { margin: 10px 0 16px; }
 .page-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.03em;
   background: linear-gradient(135deg, var(--ink) 0%, var(--primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.page-desc {
-  font-size: 14px;
-  color: var(--ink-secondary);
-  margin-top: 4px;
-  line-height: 1.5;
-}
+.page-desc { font-size: 13px; color: var(--ink-secondary); margin-top: 4px; line-height: 1.5; }
 
-/* 상업용 3D 젤리 버튼 */
+/* 버튼 공통 스타일 */
 button { font: inherit; }
 .btn-primary-3d {
   background: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
@@ -164,17 +149,14 @@ button { font: inherit; }
   border: none;
   border-radius: 18px;
   padding: 14px 20px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
-  box-shadow: 0 6px 16px -2px rgba(79, 70, 229, 0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+  box-shadow: 0 6px 16px -2px rgba(79, 70, 229, 0.4);
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform 0.15s ease;
 }
-.btn-primary-3d:active { transform: translateY(2px) scale(0.98); box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
+.btn-primary-3d:active { transform: translateY(2px) scale(0.98); }
 
 .btn-secondary-3d {
   background: var(--surface);
@@ -186,247 +168,133 @@ button { font: inherit; }
   font-weight: 700;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
 .btn-secondary-3d:active { transform: scale(0.96); }
 
-/* ==========================================================================
-   상업용 모드 선택 카드 (어린이 vs 어른: 일반/프로/헬)
-   ========================================================================== */
-.mode-card-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 8px;
-}
-
+/* 모드 선택 카드 */
+.mode-card-container { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; }
 .commercial-mode-card {
   background: var(--surface);
   border: 2px solid var(--line);
-  border-radius: 24px;
-  padding: 20px;
+  border-radius: 22px;
+  padding: 18px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.25s ease;
   box-shadow: var(--shadow-md);
   position: relative;
-  overflow: hidden;
-}
-.commercial-mode-card:hover {
-  border-color: var(--card-theme, var(--primary));
-  box-shadow: var(--shadow-lg);
 }
 .commercial-mode-card.selected {
   border-color: var(--card-theme, var(--primary));
   background: linear-gradient(180deg, var(--surface) 0%, var(--card-bg-tint, var(--surface)) 100%);
-  box-shadow: 0 14px 28px -6px rgba(0,0,0,0.1), inset 0 0 0 1px var(--card-theme, var(--primary));
+  box-shadow: 0 12px 24px -4px rgba(0,0,0,0.1);
 }
-
-.card-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
-.card-icon-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.card-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.card-icon-title { display: flex; align-items: center; gap: 12px; }
 .mode-icon-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
+  width: 44px; height: 44px;
+  border-radius: 14px;
   background: var(--card-bg-tint, var(--primary-light));
   color: var(--card-theme, var(--primary));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
 }
-.mode-heading-wrap h3 {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-.mode-stars {
-  font-size: 13px;
-  color: #F59E0B;
-  margin-top: 2px;
-}
-
+.mode-heading-wrap h3 { font-size: 19px; font-weight: 800; }
+.mode-stars { font-size: 12px; color: #F59E0B; margin-top: 2px; }
 .selection-check {
-  width: 26px;
-  height: 26px;
+  width: 24px; height: 24px;
   border-radius: 50%;
   border: 2px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800;
   color: transparent;
   background: var(--surface);
-  transition: all 0.2s ease;
 }
 .commercial-mode-card.selected .selection-check {
   background: var(--card-theme, var(--primary));
   border-color: var(--card-theme, var(--primary));
   color: white;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
+.mode-card-body p { font-size: 13px; color: var(--ink-secondary); line-height: 1.45; margin: 4px 0 10px; }
+.feature-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.feature-pill { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 20px; background: var(--line); }
+.commercial-mode-card.selected .feature-pill { background: var(--card-bg-tint, var(--primary-light)); color: var(--card-theme, var(--primary)); }
 
-.mode-card-body p {
-  font-size: 13px;
-  color: var(--ink-secondary);
-  line-height: 1.5;
-  margin: 6px 0 12px;
-}
-
-.feature-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.feature-pill {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: var(--line);
-  color: var(--ink);
-}
-.commercial-mode-card.selected .feature-pill {
-  background: var(--card-bg-tint, var(--primary-light));
-  color: var(--card-theme, var(--primary));
-}
-
-/* 어른 모드 하위 난이도 세그먼트 박스 */
-.adult-sub-tier-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 14px;
-}
-
+/* 어른 모드 3단계 티어 */
+.adult-sub-tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
 .tier-box {
   border: 2px solid var(--line);
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--surface);
-  padding: 12px 6px;
+  padding: 10px 4px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.tier-box:hover { border-color: var(--tier-color); }
 .tier-box.active {
   border-color: var(--tier-color);
   background: var(--tier-bg);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }
 .tier-box .tier-badge {
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 9px; font-weight: 800;
   text-transform: uppercase;
   color: white;
   background: var(--tier-color);
   padding: 2px 6px;
   border-radius: 6px;
   display: inline-block;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
-.tier-box b { display: block; font-size: 14px; font-weight: 800; }
-.tier-box small { font-size: 10px; color: var(--ink-secondary); font-weight: 600; display: block; margin-top: 2px; }
+.tier-box b { display: block; font-size: 13px; font-weight: 800; }
+.tier-box small { font-size: 10px; color: var(--ink-secondary); font-weight: 600; display: block; margin-top: 1px; }
 
-/* ==========================================================================
-   동물 친구 선택 그리드
-   ========================================================================== */
-.animal-select-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: 14px;
-}
+/* 동물 파트너 그리드 */
+.animal-select-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
 .animal-tile {
   background: var(--surface);
   border: 2px solid var(--line);
-  border-radius: 20px;
+  border-radius: 18px;
   aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 38px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: var(--shadow-sm);
-  position: relative;
+  transition: transform 0.15s ease;
 }
-.animal-tile:hover { transform: translateY(-3px); border-color: var(--primary); }
 .animal-tile.active {
   border-color: #F59E0B;
   background: #FFFBEB;
-  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.2);
   transform: scale(1.05);
 }
-.animal-tile.active::after {
-  content: "✓";
-  position: absolute;
-  top: 6px; right: 6px;
-  font-size: 11px;
-  font-weight: 900;
-  color: white;
-  background: #F59E0B;
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
 
-/* ==========================================================================
-   홈 & 스테이지 로드맵
-   ========================================================================== */
+/* 홈 & 로드맵 */
 .home-hero-card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 24px;
-  padding: 18px 20px;
-  margin-bottom: 16px;
+  border-radius: 22px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
   box-shadow: var(--shadow-md);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; justify-content: space-between; align-items: center;
 }
 .hero-mode-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: var(--primary-light);
-  color: var(--primary);
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800;
+  padding: 4px 10px; border-radius: 20px;
+  background: var(--primary-light); color: var(--primary);
   margin-bottom: 4px;
 }
-.hero-stage-count {
-  font-size: 22px;
-  font-weight: 800;
-}
-
+.hero-stage-count { font-size: 20px; font-weight: 800; }
 .map-wrapper {
   background: var(--surface);
-  border-radius: 28px;
-  padding: 20px 14px;
+  border-radius: 26px;
+  padding: 18px 12px;
   border: 1px solid var(--line);
   box-shadow: var(--shadow-md);
 }
 .map { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
-.c { position: relative; height: 64px; display: flex; align-items: center; justify-content: center; }
+.c { position: relative; height: 60px; display: flex; align-items: center; justify-content: center; }
 .c::before { content: ""; position: absolute; background: var(--line); z-index: 0; }
 .c.r::before { left: 50%; right: -50%; top: calc(50% - 3px); height: 6px; }
 .c.l::before { left: -50%; right: 50%; top: calc(50% - 3px); height: 6px; }
@@ -434,107 +302,42 @@ button { font: inherit; }
 .c.dn::before { background: var(--primary); }
 
 .node {
-  position: relative;
-  z-index: 1;
-  width: 48px;
-  height: 48px;
+  position: relative; z-index: 1;
+  width: 44px; height: 44px;
   border-radius: 50%;
   border: 3px solid var(--line);
   background: var(--surface);
-  font-size: 16px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease;
+  font-size: 15px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
 }
 .node.done { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
-.node.cur {
-  border-color: #F59E0B;
-  background: #FFFBEB;
-  animation: hop 1s ease-in-out infinite alternate;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
-}
+.node.cur { border-color: #F59E0B; background: #FFFBEB; animation: hop 1s ease-in-out infinite alternate; }
 .node:disabled { opacity: 0.35; cursor: default; }
 @keyframes hop { to { transform: translateY(-5px); } }
 
-/* 테마 선택 탭 */
-.theme-strip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding: 0 4px;
-}
-.theme-strip span { font-size: 12px; font-weight: 700; color: var(--ink-secondary); }
-.theme-btn {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 2px solid var(--line);
-  background: var(--surface);
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.theme-btn.active { border-color: var(--primary); transform: scale(1.1); box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
-
-/* ==========================================================================
-   인게임 HUD & 글래스 플라스크(Flask)
-   ========================================================================== */
+/* 인게임 대시보드 */
 .ingame-dashboard {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 12px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border-radius: 20px;
+  padding: 10px 16px;
+  display: flex; justify-content: space-between; align-items: center;
   box-shadow: var(--shadow-md);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
-.dash-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.stage-pill {
-  font-size: 18px;
-  font-weight: 800;
-}
+.dash-left { display: flex; align-items: center; gap: 10px; }
+.stage-pill { font-size: 17px; font-weight: 800; }
 .dash-tier-badge {
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 10px;
-  font-weight: 800;
-  color: white;
-  text-transform: uppercase;
+  padding: 2px 7px; border-radius: 6px;
+  font-size: 10px; font-weight: 800; color: white;
 }
+.dash-stats { text-align: right; }
+.dash-moves-main { font-size: 15px; font-weight: 800; }
+.dash-moves-main strong { color: var(--primary); font-size: 17px; }
+.dash-opt-sub { font-size: 11px; color: var(--ink-secondary); font-weight: 600; }
 
-.dash-stats {
-  text-align: right;
-}
-.dash-moves-main {
-  font-size: 16px;
-  font-weight: 800;
-}
-.dash-moves-main strong { color: var(--primary); font-size: 18px; }
-.dash-opt-sub {
-  font-size: 11px;
-  color: var(--ink-secondary);
-  font-weight: 600;
-}
-
-/* 동물 친구 바운스 (어린이 모드) */
-.buddy-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 44px;
-  min-height: 52px;
-  margin-bottom: 2px;
-}
+/* 동물 응원 바 */
+.buddy-bar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 40px; min-height: 48px; }
 #bd { display: inline-block; animation: bob 1.6s ease-in-out infinite alternate; }
 #bd.cheer { animation: cheer 0.7s; }
 @keyframes bob { to { transform: translateY(-6px); } }
@@ -542,177 +345,183 @@ button { font: inherit; }
 
 /* 병(Flask) 렌더링 컨테이너 */
 .tubes-canvas {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
-  gap: 18px 12px;
-  padding: 20px 0 16px;
-  flex: 1;
+  display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+  gap: 16px 12px; padding: 16px 0 12px; flex: 1;
 }
 
 .flask {
-  width: 50px;
-  height: 180px;
+  width: 50px; height: 178px;
   background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(8px);
   border: 3.5px solid rgba(255, 255, 255, 0.95);
   border-top-color: transparent;
   border-radius: 0 0 25px 25px;
-  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.15), inset 0 0 10px rgba(255,255,255,0.7);
-  display: flex;
-  flex-direction: column-reverse;
-  padding: 3px;
-  gap: 3px;
-  cursor: pointer;
-  position: relative;
+  box-shadow: 0 10px 20px -4px rgba(15, 23, 42, 0.12), inset 0 0 10px rgba(255,255,255,0.7);
+  display: flex; flex-direction: column-reverse;
+  padding: 3px; gap: 3px;
+  cursor: pointer; position: relative;
   transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-
-/* 병 주둥이 림 */
 .flask::before {
-  content: "";
-  position: absolute;
-  top: -4px;
-  left: -5px;
-  right: -5px;
-  height: 8px;
+  content: ""; position: absolute;
+  top: -4px; left: -5px; right: -5px; height: 8px;
   border: 3.5px solid rgba(255, 255, 255, 0.95);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  border-radius: 6px; background: rgba(255, 255, 255, 0.85);
   z-index: 3;
 }
-
-/* 반사 광택 */
 .flask::after {
-  content: "";
-  position: absolute;
-  top: 6px;
-  left: 4px;
-  width: 4px;
-  bottom: 14px;
+  content: ""; position: absolute;
+  top: 6px; left: 4px; width: 4px; bottom: 14px;
   background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.1) 100%);
-  border-radius: 4px;
-  pointer-events: none;
-  z-index: 4;
+  border-radius: 4px; pointer-events: none; z-index: 4;
 }
 
-.flask.selected {
-  transform: translateY(-22px) scale(1.04);
-  box-shadow: 0 24px 32px -6px rgba(79, 70, 229, 0.25);
-}
-
-.flask.pouring {
-  z-index: 20;
-  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.flask.completed {
-  border-color: #10B981;
-  animation: flaskPulse 0.5s ease;
-}
-.flask.completed::after {
-  content: "✨";
-  position: absolute;
-  left: 50%;
-  top: -12px;
-  font-size: 24px;
-  animation: sparkFloat 0.9s ease-out forwards;
-  pointer-events: none;
-  z-index: 5;
-}
+.flask.selected { transform: translateY(-22px) scale(1.04); }
+.flask.pouring { z-index: 20; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+.flask.completed { border-color: #10B981; animation: flaskPulse 0.5s ease; }
 @keyframes flaskPulse { 40% { transform: scale(1.08); } }
-@keyframes sparkFloat { from { transform: translate(-50%, 0); opacity: 1; } to { transform: translate(-50%, -36px); opacity: 0; } }
 
-/* 액체 레이어 */
-.liquid-seg {
-  flex: 1;
-  border-radius: 4px 4px 18px 18px;
+/* ==========================================================================
+   2차 특수 기믹 4종 비주얼 스타일
+   ========================================================================== */
+/* 1. 블라인드 은폐 레이어 (?) */
+.liquid-seg.blind {
+  background: #64748B !important;
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+}
+
+/* 2. 자물쇠 튜브 (Locked Tube) */
+.flask.gimmick-locked {
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+}
+.flask.gimmick-locked::before {
+  background: #CBD5E1;
+}
+.lock-chain-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+.lock-icon-badge {
+  background: rgba(15, 23, 42, 0.85);
+  color: #FCD34D;
+  font-size: 18px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  margin-bottom: 4px;
+}
+.lock-key-badge {
+  font-size: 9px;
+  font-weight: 800;
+  color: white;
+  background: var(--primary);
+  padding: 2px 5px;
+  border-radius: 6px;
+}
+
+/* 3. 카운트다운 액체 (Countdown Liquid) */
+.countdown-badge-overlay {
+  position: absolute;
+  top: -14px; right: -6px;
+  background: #EF4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
+  z-index: 12;
+  animation: pulseScale 1s infinite alternate;
+}
+@keyframes pulseScale { to { transform: scale(1.1); } }
+
+/* 4. 얼음/점성 액체 (Frozen Layer) */
+.liquid-seg.frozen {
   position: relative;
-  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.9), inset 0 0 4px rgba(147, 197, 253, 0.8);
+}
+.liquid-seg.frozen::after {
+  content: "🧊";
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* 액체 레이어 기본 */
+.liquid-seg {
+  flex: 1; border-radius: 4px 4px 18px 18px;
+  position: relative; overflow: hidden;
   transition: height 0.25s ease;
   box-shadow: inset 0 2px 3px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.1);
 }
 .liquid-seg:not(:first-child) { border-radius: 4px; }
-.liquid-seg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%, rgba(0,0,0,0.12) 100%);
-}
 .liquid-seg:last-child::before {
-  content: "";
-  position: absolute;
+  content: ""; position: absolute;
   left: 0; right: 0; top: 0; height: 6px;
-  background: rgba(255,255,255,0.45);
-  border-radius: 50%;
+  background: rgba(255,255,255,0.45); border-radius: 50%;
 }
 
-/* 어린이 모드 튜브 확대 */
-.kid .flask {
-  width: 64px;
-  height: 210px;
-  border-radius: 0 0 32px 32px;
-}
-.kid .liquid-seg { border-radius: 6px 6px 26px 26px; }
-
-/* 하단 컨트롤 바 */
-.ingame-control-bar {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 14px;
-}
+/* 하단 조작 바 */
+.ingame-control-bar { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
 .ctrl-pill-btn {
-  flex: 1;
-  height: 52px;
-  border-radius: 18px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex: 1; height: 50px;
+  border-radius: 16px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink);
+  font-size: 13px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; box-shadow: var(--shadow-sm);
 }
-.ctrl-pill-btn:disabled { opacity: 0.4; cursor: default; transform: none !important; }
-.ctrl-pill-btn:active:not(:disabled) { transform: scale(0.96); }
+.ctrl-pill-btn:disabled { opacity: 0.4; cursor: default; }
 
-/* 모달 팝업 */
+/* ==========================================================================
+   수익화 팝업: $4.99 Fail Offer (패배 즉시구제 모달)
+   ========================================================================== */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(8px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 100;
+  display: none; align-items: center; justify-content: center;
+  padding: 20px; z-index: 100;
 }
 .modal-overlay.active { display: flex; }
 .modal-window {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 32px;
-  padding: 32px 24px;
-  max-width: 380px;
-  width: 100%;
+  border-radius: 28px;
+  padding: 28px 22px;
+  max-width: 380px; width: 100%;
   text-align: center;
   box-shadow: var(--shadow-lg);
-  animation: modalZoomIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: zoomPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-@keyframes modalZoomIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes zoomPop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-.modal-badge-icon { font-size: 56px; margin-bottom: 10px; line-height: 1; }
-.modal-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-.modal-text { color: var(--ink-secondary); font-size: 14px; line-height: 1.5; margin-bottom: 22px; }
+/* Fail Offer 특화 스타일 */
+.fail-offer-banner {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border: 2px solid #F59E0B;
+  border-radius: 20px;
+  padding: 14px;
+  margin: 14px 0 18px;
+  text-align: left;
+}
+.fail-offer-title {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 16px; font-weight: 800; color: #92400E; margin-bottom: 6px;
+}
+.fail-offer-perk {
+  font-size: 13px; font-weight: 700; color: #78350F;
+  display: flex; align-items: center; gap: 6px; margin: 3px 0;
+}
 
 [hidden] { display: none !important; }
 </style>
@@ -720,15 +529,13 @@ button { font: inherit; }
 <body>
 
 <main>
-  <!-- 1. 상단 글로벌 네비게이션 헤더 -->
+  <!-- 상단 네비게이션 헤더 -->
   <header class="top-header">
     <div style="display:flex; align-items:center; gap:8px;">
-      <!-- 되돌리기(뒤로가기) 버튼 -->
       <button class="back-nav-btn" id="global-back-btn" style="display:none;">
         <span>←</span> <span id="txt-back-btn">뒤로</span>
       </button>
 
-      <!-- 3개 국어 세그먼트 셀렉터 -->
       <div class="lang-segment">
         <button class="lang-chip active" data-lang="ko">한국어</button>
         <button class="lang-chip" data-lang="ja">日本語</button>
@@ -736,11 +543,10 @@ button { font: inherit; }
       </div>
     </div>
 
-    <!-- 동물 친구 아바타 버튼 -->
     <button class="avatar-badge-btn" id="avatar-trigger-btn" title="Choose Partner">🐰</button>
   </header>
 
-  <!-- 2. 동물 친구 선택 뷰 (view-pick) -->
+  <!-- 동물 친구 선택 뷰 -->
   <section id="view-pick" hidden>
     <div class="page-title-wrap">
       <h1 class="page-title" id="pick-title">동물 파트너 선택</h1>
@@ -749,15 +555,15 @@ button { font: inherit; }
     <div class="animal-select-grid" id="animal-grid"></div>
   </section>
 
-  <!-- 3. 모드 선택 뷰 (view-mode) - 상업용 비주얼 카드 -->
+  <!-- 모드 선택 뷰 -->
   <section id="view-mode" hidden>
     <div class="page-title-wrap">
       <h1 class="page-title" id="mode-title">게임 모드 선택</h1>
-      <p class="page-desc" id="mode-desc">플레이어의 연령대와 취향에 맞춰 최적화된 난이도를 선택하세요.</p>
+      <p class="page-desc" id="mode-desc">어린이 모드와 어른 모드(4종 기믹 및 수익화 연동)를 선택하세요.</p>
     </div>
 
     <div class="mode-card-container">
-      <!-- 🧒 어린이 모드 카드 -->
+      <!-- 🧒 어린이 모드 -->
       <div class="commercial-mode-card" id="card-mode-kid" style="--card-theme: var(--kid-color); --card-bg-tint: var(--kid-bg);">
         <div class="card-top-row">
           <div class="card-icon-title">
@@ -770,49 +576,45 @@ button { font: inherit; }
           <div class="selection-check">✓</div>
         </div>
         <div class="mode-card-body">
-          <p id="txt-kid-desc">병이 큼직하고 색상이 적어 쉽게 풀려요. 이동 횟수 제한 없이 동물 친구와 즐겁게 플레이하세요!</p>
+          <p id="txt-kid-desc">병이 큼직하고 색상이 적어 쉽게 풀려요. 기믹이나 이동 제한 없이 동물 친구와 힐링하세요!</p>
           <div class="feature-pills">
-            <span class="feature-pill" id="pill-kid-1">✨ 색상 2~3종</span>
-            <span class="feature-pill" id="pill-kid-2">♾️ 이동 횟수 무제한</span>
-            <span class="feature-pill" id="pill-kid-3">🎉 동물 친구 댄스</span>
+            <span class="feature-pill">✨ 색상 2~3종</span>
+            <span class="feature-pill">♾️ 이동 횟수 무제한</span>
+            <span class="feature-pill">🛡️ 기믹 없음</span>
           </div>
         </div>
       </div>
 
-      <!-- 🧑 어른 모드 카드 및 하위 3단계 난이도 -->
+      <!-- 🧑 어른 모드 (4종 기믹 + BFS 솔버 + Fail Offer) -->
       <div class="commercial-mode-card selected" id="card-mode-adult" style="--card-theme: var(--primary); --card-bg-tint: var(--primary-light);">
         <div class="card-top-row">
           <div class="card-icon-title">
             <div class="mode-icon-circle" style="background:#EEF2FF; color:var(--primary);">🧑</div>
             <div class="mode-heading-wrap">
               <h3 id="txt-adult-name">어른 모드</h3>
-              <div class="mode-stars">★★★☆☆ <span style="color:var(--ink-secondary); font-size:11px;">Challenging</span></div>
+              <div class="mode-stars">★★★★☆ <span style="color:var(--ink-secondary); font-size:11px;">Gimmicks + BFS</span></div>
             </div>
           </div>
           <div class="selection-check">✓</div>
         </div>
         <div class="mode-card-body">
-          <p id="txt-adult-desc">실시간 BFS 엔진이 계산한 최단 이동수(M_opt) 제한이 적용되는 고난도 전략 퍼즐입니다.</p>
+          <p id="txt-adult-desc">블라인드, 자물쇠, 카운트다운, 얼음 4종 기믹과 최단수(M_opt) 제한이 적용되는 실전 퍼즐입니다.</p>
           
-          <!-- 하위 난이도 세그먼트 버튼 -->
           <div class="adult-sub-tier-grid">
-            <!-- 1) 일반 -->
             <div class="tier-box active" data-sub="casual" style="--tier-color: var(--casual); --tier-bg: var(--casual-bg);">
-              <span class="tier-badge" id="tier-badge-casual">CASUAL</span>
-              <b id="tier-title-casual">일반</b>
-              <small id="tier-sub-casual">M_opt + 15</small>
+              <span class="tier-badge">CASUAL</span>
+              <b>일반</b>
+              <small>M_opt + 15</small>
             </div>
-            <!-- 2) 프로 -->
             <div class="tier-box" data-sub="pro" style="--tier-color: var(--pro); --tier-bg: var(--pro-bg);">
-              <span class="tier-badge" id="tier-badge-pro">PRO</span>
-              <b id="tier-title-pro">프로</b>
-              <small id="tier-sub-pro">M_opt + 3</small>
+              <span class="tier-badge">PRO</span>
+              <b>프로</b>
+              <small>M_opt + 3</small>
             </div>
-            <!-- 3) 헬 -->
             <div class="tier-box" data-sub="hell" style="--tier-color: var(--hell); --tier-bg: var(--hell-bg);">
-              <span class="tier-badge" id="tier-badge-hell" style="background:#EF4444;">🔥 HELL</span>
-              <b id="tier-title-hell">헬 (지옥)</b>
-              <small id="tier-sub-hell">빈 병 1개 · 오차 0</small>
+              <span class="tier-badge" style="background:#EF4444;">🔥 HELL</span>
+              <b>헬 (지옥)</b>
+              <small>빈 병 1개 · 오차 0</small>
             </div>
           </div>
         </div>
@@ -820,32 +622,26 @@ button { font: inherit; }
     </div>
   </section>
 
-  <!-- 4. 홈 & 스테이지 로드맵 (view-home) -->
+  <!-- 홈 / 로드맵 -->
   <section id="view-home" hidden>
-    <!-- 상단 진행 요약 히어로 카드 -->
     <div class="home-hero-card">
       <div>
-        <div class="hero-mode-pill" id="home-mode-pill">🧒 어린이 모드</div>
+        <div class="hero-mode-pill" id="home-mode-pill">🧑 어른 모드 · 일반</div>
         <div class="hero-stage-count" id="home-progress-txt">Stage 1 / 30</div>
       </div>
       <div style="display:flex; gap:8px;">
-        <button class="btn-secondary-3d" id="home-change-mode-btn">⚙️ <span id="txt-change-mode">모드 변경</span></button>
-        <button class="btn-primary-3d" id="home-play-btn" style="padding:10px 18px; font-size:15px;">▶ <span id="txt-play-btn">플레이</span></button>
+        <button class="btn-secondary-3d" id="home-change-mode-btn">⚙️ 모드</button>
+        <button class="btn-primary-3d" id="home-play-btn" style="padding:10px 18px; font-size:15px;">▶ 플레이</button>
       </div>
     </div>
 
-    <!-- 배경 테마 선택 탭 -->
-    <div class="theme-strip" id="theme-strip"></div>
-
-    <!-- 로드맵 맵 -->
     <div class="map-wrapper">
       <div class="map" id="stage-roadmap"></div>
     </div>
   </section>
 
-  <!-- 5. 인게임 플레이 화면 (view-game) -->
+  <!-- 인게임 플레이 뷰 -->
   <section id="view-game" hidden>
-    <!-- 인게임 상단 대시보드 -->
     <div class="ingame-dashboard">
       <div class="dash-left">
         <button class="back-nav-btn" id="game-back-to-home-btn" style="padding:6px 12px; font-size:12px;">←</button>
@@ -856,22 +652,21 @@ button { font: inherit; }
       </div>
       <div class="dash-stats">
         <div class="dash-moves-main">
-          <span id="dash-label-moves">이동</span>: <strong id="dash-moves-used">0</strong> <span id="dash-moves-limit">/ 15</span>
+          <span>이동</span>: <strong id="dash-moves-used">0</strong> <span id="dash-moves-limit">/ 15</span>
         </div>
         <div class="dash-opt-sub" id="dash-opt-txt">Optimal: 6 moves</div>
       </div>
     </div>
 
-    <!-- 어린이 모드 동물 친구 응원 -->
+    <!-- 동물 응원 (어린이 모드 전용) -->
     <div class="buddy-bar" id="ingame-buddy" hidden>
       <span id="bd">🐰</span>
       <span id="bb"></span>
     </div>
 
-    <!-- 플라스크(Flask) 배치 캔버스 -->
+    <!-- 플라스크 캔버스 -->
     <div class="tubes-canvas" id="tubes-canvas"></div>
 
-    <!-- 하단 액션 버튼 바 -->
     <div class="ingame-control-bar">
       <button class="ctrl-pill-btn" id="btn-undo">
         <span>↩️</span> <span id="txt-undo">되돌리기</span>
@@ -889,28 +684,55 @@ button { font: inherit; }
 <!-- 승리 클리어 모달 -->
 <div class="modal-overlay" id="modal-win">
   <div class="modal-window">
-    <div class="modal-badge-icon" id="win-badge-icon">🎉</div>
+    <div style="font-size:54px; margin-bottom:8px;">🎉</div>
     <h2 class="modal-title" id="win-title-txt" style="color:#10B981;">스테이지 클리어!</h2>
-    <p class="modal-text" id="win-desc-txt">완벽한 물 붓기 정렬을 완료했습니다!</p>
+    <p style="color:var(--ink-secondary); font-size:14px; margin-bottom:20px;" id="win-desc-txt">완벽한 물 붓기 정렬 완료!</p>
     <button class="btn-primary-3d" id="win-next-btn" style="width:100%; margin-bottom:10px;">다음 단계</button>
     <button class="btn-secondary-3d" id="win-home-btn" style="width:100%;">스테이지 목록</button>
   </div>
 </div>
 
-<!-- 이동 횟수 소진(게임오버) 모달 -->
-<div class="modal-overlay" id="modal-fail">
+<!-- ==========================================================================
+     $4.99 패배 즉시구제 (Fail Offer) 모달 팝업
+     ========================================================================== -->
+<div class="modal-overlay" id="modal-fail-offer">
   <div class="modal-window">
-    <div class="modal-badge-icon">⏳</div>
-    <h2 class="modal-title" id="fail-title-txt" style="color:#EF4444;">이동 횟수 초과!</h2>
-    <p class="modal-text" id="fail-desc-txt">허용된 이동 횟수를 모두 소진했습니다.</p>
-    <button class="btn-primary-3d" id="fail-retry-btn" style="width:100%; margin-bottom:10px; background:#64748B;">다시 도전</button>
-    <button class="btn-secondary-3d" id="fail-mode-btn" style="width:100%;">난이도 변경</button>
+    <div style="font-size:48px; margin-bottom:4px;">🚨</div>
+    <h2 class="modal-title" style="color:#EF4444;" id="fail-title">이동 횟수 소진!</h2>
+    <p style="color:var(--ink-secondary); font-size:13px; line-height:1.4;">
+      허용된 이동 횟수를 모두 소진했습니다.<br>지금 즉시 구제 패키지로 클리어를 이어가세요!
+    </p>
+
+    <!-- $4.99 Fail Offer 패키지 박스 -->
+    <div class="fail-offer-banner">
+      <div class="fail-offer-title">
+        <span>🎁 즉시 구제 패키지</span>
+        <span style="background:#F59E0B; color:white; padding:2px 8px; border-radius:8px; font-size:12px;">$4.99</span>
+      </div>
+      <div class="fail-offer-perk">✨ <strong>+5회 추가 이동</strong> 즉시 연장</div>
+      <div class="fail-offer-perk">🧪 <strong>비상 빈 병 1개</strong> 즉시 획득</div>
+    </div>
+
+    <!-- 결제 버튼 -->
+    <button class="btn-primary-3d" id="offer-buy-btn" style="width:100%; margin-bottom:8px; background:linear-gradient(180deg,#F59E0B 0%,#D97706 100%);">
+      💳 $4.99 즉시 구제 (+5회 & 비상 병)
+    </button>
+
+    <!-- 무료 리워드 광고 버튼 -->
+    <button class="btn-secondary-3d" id="offer-ad-btn" style="width:100%; margin-bottom:8px;">
+      🎬 광고 보고 +5회 이동 연장
+    </button>
+
+    <!-- 포기 버튼 -->
+    <button class="btn-secondary-3d" id="offer-giveup-btn" style="width:100%; border:none; color:var(--ink-secondary); font-size:12px;">
+      포기하고 처음부터 다시 시도
+    </button>
   </div>
 </div>
 
 <script>
 /* ==========================================================================
-   다국어 사전 (한국어, 日本語, English)
+   다국어 사전 (ko, ja, en)
    ========================================================================== */
 const I18N = {
   ko: {
@@ -918,129 +740,93 @@ const I18N = {
     pickTitle: "동물 파트너 선택",
     pickDesc: "언제나 함께 달리며 응원해 줄 귀여운 단짝을 골라보세요!",
     modeTitle: "게임 모드 선택",
-    modeDesc: "플레이어의 연령대와 취향에 맞춰 최적화된 난이도를 선택하세요.",
+    modeDesc: "어린이 모드와 어른 모드(4종 기믹 및 수익화 연동)를 선택하세요.",
     kidName: "어린이 모드",
-    kidDesc: "병이 큼직하고 색상이 적어 쉽게 풀려요. 이동 횟수 제한 없이 동물 친구와 즐겁게 플레이하세요!",
-    kidPill1: "✨ 색상 2~3종",
-    kidPill2: "♾️ 이동 횟수 무제한",
-    kidPill3: "🎉 동물 친구 댄스",
+    kidDesc: "병이 큼직하고 색상이 적어 쉽게 풀려요. 기믹이나 이동 제한 없이 동물 친구와 힐링하세요!",
     adultName: "어른 모드",
-    adultDesc: "실시간 BFS 엔진이 계산한 최단 이동수(M_opt) 제한이 적용되는 고난도 전략 퍼즐입니다.",
-    tierCasual: "일반",
-    tierCasualD: "M_opt + 15회",
-    tierPro: "프로",
-    tierProD: "M_opt + 3회",
-    tierHell: "헬 (지옥)",
-    tierHellD: "빈 병 1개 · 오차 0",
-    changeMode: "모드 변경",
-    play: "플레이",
+    adultDesc: "블라인드, 자물쇠, 카운트다운, 얼음 4종 기믹과 최단수(M_opt) 제한이 적용되는 실전 퍼즐입니다.",
     stage: "스테이지 {n}",
     moves: "이동",
     unlimited: "무제한",
     optimalTxt: "최적: {n}회",
     undo: "되돌리기",
-    sound: "소리",
     soundOn: "소리 켜기",
     soundOff: "소리 끄기",
     restart: "다시 시작",
-    theme: "테마",
     clearTitle: "스테이지 클리어!",
     kidClearTitle: "와, 해냈어요!",
     kidClearMsg: "정말 대단해요! 별 세 개 획득! ⭐⭐⭐",
     solvedMsg: "{moves}회 만에 클리어! (최적 최단수: {opt}회)",
     nextStage: "다음 단계",
     stageList: "스테이지 목록",
-    failTitle: "이동 횟수 초과!",
-    failMsg: "{tier} 모드의 이동 제한({limit}회)에 도달했습니다.",
-    retry: "다시 도전"
+    failOfferTitle: "이동 횟수 소진!",
+    failOfferDesc: "허용된 이동 횟수를 모두 소진했습니다.<br>지금 즉시 구제 패키지로 클리어를 이어가세요!",
+    buyOffer: "💳 $4.99 즉시 구제 (+5회 & 비상 병)",
+    watchAd: "🎬 광고 보고 +5회 이동 연장",
+    giveUp: "포기하고 처음부터 다시 시도"
   },
   ja: {
     back: "もどる",
     pickTitle: "どうぶつパートナー選択",
     pickDesc: "いつでも一緒に走って応援してくれる可愛い相棒を選んでね!",
     modeTitle: "ゲームモード選択",
-    modeDesc: "年齢や好みに合わせて最適化された難易度を選択してください。",
+    modeDesc: "こどもモードとおとなモード(4種ギミック＆収益化連動)を選択してください。",
     kidName: "こども モード",
-    kidDesc: "びんが大きくて色が少ないので簡単! 手数制限なしで動物のお友達と楽しく遊べます。",
-    kidPill1: "✨ 色は2~3色",
-    kidPill2: "♾️ 移動手数 無制限",
-    kidPill3: "🎉 動物のダンス応援",
+    kidDesc: "びんが大きくて色が少ないので簡単! ギミックなし手数無制限で楽しく遊べます。",
     adultName: "おとな モード",
-    adultDesc: "リアルタイムBFSエンジンが計算した最短手数(M_opt)制限がある本格頭脳パズルです。",
-    tierCasual: "ノーマル",
-    tierCasualD: "M_opt + 15手",
-    tierPro: "プロ",
-    tierProD: "M_opt + 3手",
-    tierHell: "ヘル(地獄)",
-    tierHellD: "空びん1本・ミス0",
-    changeMode: "モード変更",
-    play: "あそぶ",
+    adultDesc: "ブラインド、鍵、カウントダウン、氷の4種ギミックと最短手数(M_opt)制限がある本格頭脳パズルです。",
     stage: "ステージ {n}",
     moves: "移動",
     unlimited: "無制限",
     optimalTxt: "最短: {n}手",
     undo: "１つ戻す",
-    sound: "音",
     soundOn: "音をオン",
     soundOff: "音をオフ",
     restart: "やり直す",
-    theme: "テーマ",
     clearTitle: "ステージクリア!",
     kidClearTitle: "やったね!",
     kidClearMsg: "とってもじょうず! 星3つ獲得! ⭐⭐⭐",
     solvedMsg: "{moves}手でクリア! (最短手数: {opt}手)",
     nextStage: "次のステージ",
     stageList: "ステージ一覧",
-    failTitle: "手数オーバー!",
-    failMsg: "{tier}モードの制限手数({limit}手)を超えました。",
-    retry: "もう一度挑戦"
+    failOfferTitle: "手数オーバー!",
+    failOfferDesc: "制限手数をすべて消費しました。<br>救済パッケージでクリアを目指しましょう!",
+    buyOffer: "💳 $4.99 即時救済 (+5手＆非常用ボトル)",
+    watchAd: "🎬 広告を見て+5手延長",
+    giveUp: "諦めて最初からやり直す"
   },
   en: {
     back: "Back",
     pickTitle: "Choose Animal Buddy",
     pickDesc: "Pick an adorable partner to cheer you on along the journey!",
     modeTitle: "Select Game Mode",
-    modeDesc: "Choose the perfect difficulty tailored to your age and preferred challenge level.",
+    modeDesc: "Choose between Kids Mode and Adult Mode (with 4 gimmicks & Fail Offer).",
     kidName: "Kids Mode",
     kidDesc: "Larger tubes and fewer colors make it easy & fun! Relax with unlimited moves.",
-    kidPill1: "✨ 2~3 Colors",
-    kidPill2: "♾️ Unlimited Moves",
-    kidPill3: "🎉 Cheering Buddy",
     adultName: "Adult Mode",
-    adultDesc: "Strategic puzzle with strict move limits based on real-time BFS optimal routes.",
-    tierCasual: "Casual",
-    tierCasualD: "M_opt + 15",
-    tierPro: "Pro",
-    tierProD: "M_opt + 3",
-    tierHell: "Hell",
-    tierHellD: "Only 1 Empty · 0 Error",
-    changeMode: "Mode",
-    play: "Play",
+    adultDesc: "Features 4 special gimmicks (Blind, Lock, Countdown, Frozen) and optimal move limits.",
     stage: "Stage {n}",
     moves: "Moves",
     unlimited: "Unlimited",
     optimalTxt: "Optimal: {n}",
     undo: "Undo",
-    sound: "Sound",
     soundOn: "Sound On",
     soundOff: "Sound Off",
     restart: "Restart",
-    theme: "Theme",
     clearTitle: "Stage Complete!",
     kidClearTitle: "You Did It!",
     kidClearMsg: "Awesome job! You earned 3 stars! ⭐⭐⭐",
     solvedMsg: "Solved in {moves} moves! (Optimal: {opt})",
     nextStage: "Next Stage",
     stageList: "Stage List",
-    failTitle: "Out of Moves!",
-    failMsg: "You reached the limit of {limit} moves in {tier} Mode.",
-    retry: "Try Again"
+    failOfferTitle: "Out of Moves!",
+    failOfferDesc: "You reached the limit of moves.<br>Continue solving with the instant rescue package!",
+    buyOffer: "💳 $4.99 Instant Rescue (+5 Moves & Extra Tube)",
+    watchAd: "🎬 Watch Ad for +5 Moves",
+    giveUp: "Give Up and Retry"
   }
 };
 
-/* ==========================================================================
-   상용 파스텔 컬러 & 상수
-   ========================================================================== */
 const PASTEL_PALETTE = [
   "#FF8A9E", "#70DEB4", "#B8A7F7", "#76C7FA", "#FFDF70",
   "#FFAF87", "#F09CE7", "#FF7373", "#74E396", "#5F95E8",
@@ -1049,7 +835,7 @@ const PASTEL_PALETTE = [
 
 const TOTAL_STAGES = 30;
 const CAPACITY = 4;
-const STORAGE_KEY = "waterSort_commercial_v3";
+const STORAGE_KEY = "waterSort_phase2_commercial";
 
 let State = {
   lang: "ko",
@@ -1059,11 +845,9 @@ let State = {
   cleared: { kid: {}, adult_casual: {}, adult_pro: {}, adult_hell: {} },
   cur: null,
   mute: false,
-  theme: "",
   previousView: "view-home"
 };
 
-// 세이브 데이터 복원
 try {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) State = Object.assign(State, JSON.parse(saved));
@@ -1082,9 +866,7 @@ function t(key, params) {
   return text;
 }
 
-/* ==========================================================================
-   사운드 FX (Web Audio API)
-   ========================================================================== */
+/* Web Audio API */
 let audioCtx = null;
 function playSound(type) {
   if (State.mute) return;
@@ -1093,40 +875,32 @@ function playSound(type) {
     if (audioCtx.state === "suspended") audioCtx.resume();
     const t0 = audioCtx.currentTime;
 
-    const playTone = (freq, dur, at, wave = "sine", gain = 0.15) => {
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = wave;
-      osc.frequency.setValueAtTime(freq, t0 + at);
-      g.gain.setValueAtTime(0.0001, t0 + at);
-      g.gain.exponentialRampToValueAtTime(gain, t0 + at + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + at + dur);
-      osc.connect(g);
-      g.connect(audioCtx.destination);
-      osc.start(t0 + at);
-      osc.stop(t0 + at + dur + 0.02);
+    const tone = (f, d, at, w = "sine", g = 0.15) => {
+      const o = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      o.type = w;
+      o.frequency.setValueAtTime(f, t0 + at);
+      gain.gain.setValueAtTime(0.0001, t0 + at);
+      gain.gain.exponentialRampToValueAtTime(g, t0 + at + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + at + d);
+      o.connect(gain); gain.connect(audioCtx.destination);
+      o.start(t0 + at); o.stop(t0 + at + d + 0.02);
     };
 
-    if (type === "click") playTone(800, 0.05, 0, "sine", 0.08);
-    else if (type === "select") playTone(680, 0.08, 0, "sine", 0.12);
-    else if (type === "undo") playTone(380, 0.12, 0, "triangle", 0.15);
-    else if (type === "pour") {
-      for (let i = 0; i < 5; i++) playTone(440 + i * 65, 0.08, i * 0.05, "sine", 0.10);
-    }
-    else if (type === "complete") {
-      [1047, 1319, 1568].forEach((f, i) => playTone(f, 0.22, i * 0.07, "triangle", 0.16));
-    }
-    else if (type === "win") {
-      [523, 659, 784, 1047].forEach((f, i) => playTone(f, 0.25, i * 0.12, "triangle", 0.18));
-    }
-    else if (type === "fail") {
-      [380, 320, 260].forEach((f, i) => playTone(f, 0.22, i * 0.10, "sawtooth", 0.12));
-    }
+    if (type === "click") tone(800, 0.05, 0, "sine", 0.08);
+    else if (type === "select") tone(680, 0.08, 0, "sine", 0.12);
+    else if (type === "undo") tone(380, 0.12, 0, "triangle", 0.15);
+    else if (type === "pour") { for (let i = 0; i < 5; i++) tone(440 + i * 65, 0.08, i * 0.05, "sine", 0.10); }
+    else if (type === "complete") { [1047, 1319, 1568].forEach((f, i) => tone(f, 0.22, i * 0.07, "triangle", 0.16)); }
+    else if (type === "win") { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.25, i * 0.12, "triangle", 0.18)); }
+    else if (type === "ice") { [600, 900, 450].forEach((f, i) => tone(f, 0.09, i * 0.04, "square", 0.14)); }
+    else if (type === "unlock") { [784, 1047].forEach((f, i) => tone(f, 0.18, i * 0.08, "triangle", 0.18)); }
+    else if (type === "fail") { [380, 320, 260].forEach((f, i) => tone(f, 0.22, i * 0.10, "sawtooth", 0.12)); }
   } catch(e) {}
 }
 
 /* ==========================================================================
-   BFS 최적수(M_opt) 솔버
+   BFS 최적수(M_opt) 연산 솔버
    ========================================================================== */
 class WaterSortSolver {
   static solve(tubes) {
@@ -1228,7 +1002,7 @@ class WaterSortSolver {
 }
 
 /* ==========================================================================
-   스테이지 생성기 (어린이 vs 어른: 일반 / 프로 / 헬)
+   스테이지 및 4종 기믹 생성기 (어른 모드 전용)
    ========================================================================== */
 function generateStage(stageNum) {
   let colorCount, emptyCount, deltaMoves, isUnlimited = false;
@@ -1249,8 +1023,8 @@ function generateStage(stageNum) {
       deltaMoves = 3;
     } else { // hell
       colorCount = Math.min(7 + Math.floor((stageNum - 1) / 3), 9);
-      emptyCount = 1; // Hell: 단 1개의 빈 병만 제공!
-      deltaMoves = 0; // M_limit = M_opt + 0 (오차 0회 극한 퍼즐)
+      emptyCount = 1; // Hell 모드: 단 1개의 빈 병만 허용!
+      deltaMoves = 0; // M_opt + 0회
     }
   }
 
@@ -1291,43 +1065,74 @@ function generateStage(stageNum) {
     bestMopt = colorCount * 2;
   }
 
+  // 4종 기믹 설정 (어른 모드 전용)
+  const gimmicks = {
+    blindTubes: {},      // { tubeIdx: hiddenCount }
+    lockedTubes: {},     // { tubeIdx: { isLocked: true, keyColor: colorId } }
+    countdownTubes: {},  // { tubeIdx: remainingCount }
+    frozenLayers: {}     // { tubeIdx: hitsRemaining }
+  };
+
+  if (State.mainMode === "adult") {
+    // 1. 블라인드 튜브 (Stage 3 이상)
+    if (stageNum >= 3 && bestTubes.length >= 3) {
+      gimmicks.blindTubes[0] = 2; // 첫 번째 튜브 하단 2층 은폐
+    }
+    // 2. 얼음 레이어 (Stage 6 이상)
+    if (stageNum >= 6 && bestTubes.length >= 4) {
+      gimmicks.frozenLayers[1] = 2; // 2타에 걸쳐 녹는 얼음
+    }
+    // 3. 자물쇠 튜브 (Stage 8 이상)
+    if (stageNum >= 8 && bestTubes.length >= 5) {
+      const lockIdx = bestTubes.length - 2;
+      const keyCol = bestTubes[0][bestTubes[0].length - 1];
+      gimmicks.lockedTubes[lockIdx] = { isLocked: true, keyColor: keyCol };
+    }
+    // 4. 카운트다운 액체 (Stage 10 이상 또는 Hell 모드)
+    if (stageNum >= 10 || State.adultSub === "hell") {
+      const cdIdx = Math.min(2, bestTubes.length - 3);
+      gimmicks.countdownTubes[cdIdx] = (State.adultSub === "hell") ? 10 : 15;
+    }
+  }
+
   const limitMoves = isUnlimited ? 0 : (bestMopt + deltaMoves);
-  return { tubes: bestTubes, optimalMoves: bestMopt, limitMoves: limitMoves, isUnlimited: isUnlimited };
+  return {
+    tubes: bestTubes,
+    optimalMoves: bestMopt,
+    limitMoves: limitMoves,
+    isUnlimited: isUnlimited,
+    gimmicks: gimmicks
+  };
 }
 
 /* ==========================================================================
-   화면 전환 및 되돌리기(Back) 제어
+   화면 및 상태 제어
    ========================================================================== */
-let currentActiveView = "view-home";
+let currentView = "view-home";
 let selectedTubeIdx = null;
 let isBusy = false;
 
-function showView(viewId, recordHistory = true) {
-  if (recordHistory && currentActiveView !== viewId) {
-    State.previousView = currentActiveView;
-  }
-  currentActiveView = viewId;
+function showView(viewId, record = true) {
+  if (record && currentView !== viewId) State.previousView = currentView;
+  currentView = viewId;
 
   ["view-pick", "view-mode", "view-home", "view-game"].forEach(id => {
     $(id).hidden = (id !== viewId);
   });
 
-  // 상단 글로벌 '뒤로' 버튼 노출 조건:
-  // 동물 선택 뷰나 모드 선택 뷰에 진입했을 때 언제든 직전 화면으로 돌아갈 수 있도록 표시!
-  const showBackBtn = (viewId === "view-pick" || viewId === "view-mode");
-  $("global-back-btn").style.display = showBackBtn ? "inline-flex" : "none";
+  const showBack = (viewId === "view-pick" || viewId === "view-mode");
+  $("global-back-btn").style.display = showBack ? "inline-flex" : "none";
 
   $("modal-win").classList.remove("active");
-  $("modal-fail").classList.remove("active");
+  $("modal-fail-offer").classList.remove("active");
 }
 
-function handleGlobalBack() {
+function handleBack() {
   playSound("click");
-  // 이전 뷰가 유효하면 해당 뷰로, 아니면 홈으로 복귀
-  if (State.previousView && State.previousView !== currentActiveView) {
+  if (State.previousView && State.previousView !== currentView) {
     showView(State.previousView, false);
-    if (State.previousView === "view-home") renderHomeScreen();
-    else if (State.previousView === "view-game") renderInGameScreen();
+    if (State.previousView === "view-home") renderHome();
+    else if (State.previousView === "view-game") renderGame();
   } else {
     showHome();
   }
@@ -1335,7 +1140,7 @@ function handleGlobalBack() {
 
 function showHome() {
   showView("view-home");
-  renderHomeScreen();
+  renderHome();
 }
 
 function getModeKey() {
@@ -1348,70 +1153,44 @@ function getClearedData() {
   return State.cleared[k];
 }
 
-/* ==========================================================================
-   UI 텍스트 및 다국어 실시간 동기화
-   ========================================================================== */
 function applyLanguage() {
   document.documentElement.lang = State.lang;
   $("txt-back-btn").textContent = t("back");
 
-  // 언어 세그먼트 활성화 표시
-  document.querySelectorAll(".lang-chip").forEach(chip => {
-    chip.classList.toggle("active", chip.dataset.lang === State.lang);
+  document.querySelectorAll(".lang-chip").forEach(c => {
+    c.classList.toggle("active", c.dataset.lang === State.lang);
   });
   $("avatar-trigger-btn").textContent = State.animal;
 
-  // 동물 선택 뷰
   $("pick-title").textContent = t("pickTitle");
   $("pick-desc").textContent = t("pickDesc");
-
-  // 모드 선택 뷰
   $("mode-title").textContent = t("modeTitle");
   $("mode-desc").textContent = t("modeDesc");
   $("txt-kid-name").textContent = t("kidName");
   $("txt-kid-desc").textContent = t("kidDesc");
-  $("pill-kid-1").textContent = t("kidPill1");
-  $("pill-kid-2").textContent = t("kidPill2");
-  $("pill-kid-3").textContent = t("kidPill3");
-
   $("txt-adult-name").textContent = t("adultName");
   $("txt-adult-desc").textContent = t("adultDesc");
-  $("tier-title-casual").textContent = t("tierCasual");
-  $("tier-sub-casual").textContent = t("tierCasualD");
-  $("tier-title-pro").textContent = t("tierPro");
-  $("tier-sub-pro").textContent = t("tierProD");
-  $("tier-title-hell").textContent = t("tierHell");
-  $("tier-sub-hell").textContent = t("tierHellD");
 
-  // 홈 화면
-  $("txt-change-mode").textContent = t("changeMode");
-  $("txt-play-btn").textContent = t("play");
-
-  // 인게임 HUD & 컨트롤
-  $("dash-label-moves").textContent = t("moves");
   $("txt-undo").textContent = t("undo");
   $("txt-restart").textContent = t("restart");
   setSoundBtnText();
 
-  // 모달
   $("win-next-btn").textContent = t("nextStage");
   $("win-home-btn").textContent = t("stageList");
-  $("fail-title-txt").textContent = t("failTitle");
-  $("fail-retry-btn").textContent = t("retry");
-  $("fail-mode-btn").textContent = t("changeMode");
+  $("fail-title").textContent = t("failOfferTitle");
+  $("offer-buy-btn").textContent = t("buyOffer");
+  $("offer-ad-btn").textContent = t("watchAd");
+  $("offer-giveup-btn").textContent = t("giveUp");
 
   document.body.classList.toggle("kid", State.mainMode === "kid");
-  updateModeCardVisuals();
+  updateModeVisuals();
 }
 
 function setSoundBtnText() {
   $("txt-sound").textContent = State.mute ? t("soundOff") : t("soundOn");
 }
 
-/* ==========================================================================
-   모드 선택 화면 비주얼 하이라이트 동기화
-   ========================================================================== */
-function updateModeCardVisuals() {
+function updateModeVisuals() {
   const isKid = (State.mainMode === "kid");
   $("card-mode-kid").classList.toggle("selected", isKid);
   $("card-mode-adult").classList.toggle("selected", !isKid);
@@ -1421,18 +1200,14 @@ function updateModeCardVisuals() {
   });
 }
 
-/* ==========================================================================
-   홈 화면 렌더링 (히어로 뱃지, 테마, 로드맵)
-   ========================================================================== */
-function renderHomeScreen() {
-  // 1. 히어로 진행 뱃지
+function renderHome() {
   const pill = $("home-mode-pill");
   if (State.mainMode === "kid") {
     pill.textContent = `🧒 ${t("kidName")}`;
     pill.style.background = "var(--kid-bg)";
     pill.style.color = "var(--kid-color)";
   } else {
-    const subTitle = State.adultSub === "casual" ? t("tierCasual") : (State.adultSub === "pro" ? t("tierPro") : t("tierHell"));
+    const subTitle = State.adultSub === "casual" ? "일반" : (State.adultSub === "pro" ? "프로" : "헬");
     const color = State.adultSub === "casual" ? "var(--casual)" : (State.adultSub === "pro" ? "var(--pro)" : "var(--hell)");
     const bg = State.adultSub === "casual" ? "var(--casual-bg)" : (State.adultSub === "pro" ? "var(--pro-bg)" : "var(--hell-bg)");
     pill.textContent = `🧑 ${t("adultName")} · ${subTitle}`;
@@ -1445,34 +1220,7 @@ function renderHomeScreen() {
   while (currentStage <= TOTAL_STAGES && cleared[currentStage]) currentStage++;
   $("home-progress-txt").textContent = `Stage ${currentStage} / ${TOTAL_STAGES}`;
 
-  // 2. 테마 탭
-  renderThemes();
-
-  // 3. 로드맵 맵 렌더링
   renderRoadmap(currentStage, cleared);
-}
-
-function renderThemes() {
-  const themes = [["", "🎨", 0], ["sea", "🌊", 3], ["forest", "🌲", 8], ["space", "🌌", 15], ["candy", "🍬", 22]];
-  const strip = $("theme-strip");
-  strip.innerHTML = `<span>${t("theme")}:</span>`;
-  const clearedCount = Object.keys(getClearedData()).length;
-
-  themes.forEach(([thKey, icon, req]) => {
-    const btn = document.createElement("button");
-    btn.className = "theme-btn" + (thKey === State.theme ? " active" : "");
-    const unlocked = clearedCount >= req;
-    btn.textContent = unlocked ? icon : "🔒";
-    btn.disabled = !unlocked;
-    btn.onclick = () => {
-      State.theme = thKey;
-      document.body.dataset.th = thKey;
-      saveState();
-      playSound("click");
-      renderThemes();
-    };
-    strip.appendChild(btn);
-  });
 }
 
 function renderRoadmap(currentStage, cleared) {
@@ -1508,7 +1256,7 @@ function renderRoadmap(currentStage, cleared) {
 }
 
 /* ==========================================================================
-   인게임 게임플레이 루프
+   인게임 게임플레이 & 기믹 / Fail Offer 연동
    ========================================================================== */
 function startGame(stageNum) {
   const data = generateStage(stageNum);
@@ -1519,6 +1267,7 @@ function startGame(stageNum) {
     optimalMoves: data.optimalMoves,
     limitMoves: data.limitMoves,
     isUnlimited: data.isUnlimited,
+    gimmicks: data.gimmicks,
     history: []
   };
   selectedTubeIdx = null;
@@ -1526,14 +1275,13 @@ function startGame(stageNum) {
   saveState();
 
   showView("view-game");
-  renderInGameScreen();
+  renderGame();
 }
 
-function renderInGameScreen() {
+function renderGame() {
   const cur = State.cur;
   $("dash-stage-num").textContent = t("stage", { n: cur.level });
 
-  // 난이도 태그 뱃지
   const badge = $("dash-tier-badge");
   if (State.mainMode === "kid") {
     badge.textContent = "KIDS";
@@ -1543,7 +1291,6 @@ function renderInGameScreen() {
     badge.style.background = State.adultSub === "casual" ? "var(--casual)" : (State.adultSub === "pro" ? "var(--pro)" : "var(--hell)");
   }
 
-  // 이동 수 카운터
   $("dash-moves-used").textContent = cur.moves;
   if (cur.isUnlimited) {
     $("dash-moves-limit").textContent = " (" + t("unlimited") + ")";
@@ -1553,7 +1300,6 @@ function renderInGameScreen() {
     $("dash-opt-txt").textContent = t("optimalTxt", { n: cur.optimalMoves });
   }
 
-  // 어린이 모드 동물 친구
   const isKid = State.mainMode === "kid";
   $("ingame-buddy").hidden = !isKid;
   if (isKid) $("bd").textContent = State.animal;
@@ -1565,13 +1311,54 @@ function renderInGameScreen() {
   cur.tubes.forEach((tube, idx) => {
     const flask = document.createElement("div");
     const isCompleted = tube.length === CAPACITY && tube.every(c => c === tube[0]);
-    flask.className = "flask" + (selectedTubeIdx === idx ? " selected" : "") + (isCompleted ? " completed" : "");
+    const isLocked = cur.gimmicks.lockedTubes[idx] && cur.gimmicks.lockedTubes[idx].isLocked;
+
+    flask.className = "flask" +
+      (selectedTubeIdx === idx ? " selected" : "") +
+      (isCompleted ? " completed" : "") +
+      (isLocked ? " gimmick-locked" : "");
     flask.id = `flask-${idx}`;
 
-    tube.forEach(colorIdx => {
+    // 1. 자물쇠 오버레이
+    if (isLocked) {
+      const lockOverlay = document.createElement("div");
+      lockOverlay.className = "lock-chain-overlay";
+      const keyCol = cur.gimmicks.lockedTubes[idx].keyColor;
+      lockOverlay.innerHTML = `
+        <div class="lock-icon-badge">🔒</div>
+        <div class="lock-key-badge" style="background:${PASTEL_PALETTE[keyCol] || '#6366F1'};">KEY</div>
+      `;
+      flask.appendChild(lockOverlay);
+    }
+
+    // 2. 카운트다운 오버레이
+    if (cur.gimmicks.countdownTubes[idx] !== undefined) {
+      const cdCount = cur.gimmicks.countdownTubes[idx];
+      const cdBadge = document.createElement("div");
+      cdBadge.className = "countdown-badge-overlay";
+      cdBadge.textContent = `⏱️ ${cdCount}`;
+      flask.appendChild(cdBadge);
+    }
+
+    // 3. 액체 레이어 렌더링 (블라인드 & 얼음 기믹 반영)
+    const blindCount = cur.gimmicks.blindTubes[idx] || 0;
+    const isFrozen = (cur.gimmicks.frozenLayers[idx] && cur.gimmicks.frozenLayers[idx] > 1);
+
+    tube.forEach((colorIdx, layerIdx) => {
       const seg = document.createElement("div");
       seg.className = "liquid-seg";
-      seg.style.background = PASTEL_PALETTE[colorIdx];
+
+      // 하단 블라인드 처리
+      if (layerIdx < blindCount) {
+        seg.classList.add("blind");
+        seg.textContent = "?";
+      } else {
+        seg.style.background = PASTEL_PALETTE[colorIdx];
+        // 최상단 얼음 레이어 처리
+        if (isFrozen && layerIdx === tube.length - 1) {
+          seg.classList.add("frozen");
+        }
+      }
       flask.appendChild(seg);
     });
 
@@ -1586,25 +1373,43 @@ function onFlaskClick(clickedIdx) {
   if (isBusy) return;
   const cur = State.cur;
 
-  // 1. 첫 번째 병 선택
+  // 1. 자물쇠 기믹 검사
+  if (cur.gimmicks.lockedTubes[clickedIdx] && cur.gimmicks.lockedTubes[clickedIdx].isLocked) {
+    playSound("click");
+    alert("🔒 이 병은 자물쇠로 잠겨있습니다! 열쇠 색상을 완성하여 해금하세요.");
+    return;
+  }
+
+  // 2. 첫 번째 병 선택
   if (selectedTubeIdx === null) {
     if (cur.tubes[clickedIdx].length > 0) {
       selectedTubeIdx = clickedIdx;
       playSound("select");
-      renderInGameScreen();
+      renderGame();
     }
     return;
   }
 
-  // 2. 같은 병 재클릭 -> 선택 해제
+  // 3. 같은 병 재클릭 -> 선택 해제
   if (selectedTubeIdx === clickedIdx) {
     selectedTubeIdx = null;
     playSound("click");
-    renderInGameScreen();
+    renderGame();
     return;
   }
 
-  // 3. 부어넣기(Pour) 시도
+  // 4. 얼음 기믹 검사 (Frozen Layer): 얼어있는 병을 부으려고 할 때 1타는 얼음 깨짐으로 소진
+  if (cur.gimmicks.frozenLayers[selectedTubeIdx] && cur.gimmicks.frozenLayers[selectedTubeIdx] > 1) {
+    cur.gimmicks.frozenLayers[selectedTubeIdx]--; // 1회 타격으로 해동
+    selectedTubeIdx = null;
+    cur.moves++;
+    playSound("ice");
+    renderGame();
+    checkGameStatus();
+    return;
+  }
+
+  // 5. 부어넣기(Pour) 시도
   const fromIdx = selectedTubeIdx;
   const toIdx = clickedIdx;
   const fromT = cur.tubes[fromIdx];
@@ -1617,10 +1422,10 @@ function onFlaskClick(clickedIdx) {
     if (toT.length > 0) {
       selectedTubeIdx = toIdx;
       playSound("select");
-      renderInGameScreen();
+      renderGame();
     } else {
       selectedTubeIdx = null;
-      renderInGameScreen();
+      renderGame();
     }
   }
 }
@@ -1647,7 +1452,7 @@ function executePour(fromIdx, toIdx) {
   const space = CAPACITY - toT.length;
   const amount = Math.min(consecutive, space);
 
-  // 상업용 틸트 회전 애니메이션
+  // 틸트 회전 애니메이션
   const fromEl = $(`flask-${fromIdx}`);
   const toEl = $(`flask-${toIdx}`);
   const fromRect = fromEl.getBoundingClientRect();
@@ -1662,12 +1467,40 @@ function executePour(fromIdx, toIdx) {
   playSound("pour");
 
   setTimeout(() => {
-    // 액체 데이터 이동 & 히스토리 적재
+    // 액체 이동
     for (let i = 0; i < amount; i++) {
       toT.push(fromT.pop());
     }
     cur.history.push({ from: fromIdx, to: toIdx, amount: amount });
     cur.moves++;
+
+    // 기믹 1: 블라인드 해금 검사 (상단 액체가 빠져나가면 하단 공개)
+    if (cur.gimmicks.blindTubes[fromIdx] && fromT.length <= cur.gimmicks.blindTubes[fromIdx]) {
+      cur.gimmicks.blindTubes[fromIdx] = Math.max(0, fromT.length - 1);
+    }
+
+    // 기믹 2: 카운트다운 차감 (1씩 감소)
+    let countdownExpired = false;
+    for (const tubeId in cur.gimmicks.countdownTubes) {
+      if (cur.gimmicks.countdownTubes[tubeId] > 0) {
+        cur.gimmicks.countdownTubes[tubeId]--;
+        if (cur.gimmicks.countdownTubes[tubeId] <= 0) {
+          countdownExpired = true;
+        }
+      }
+    }
+
+    // 기믹 3: 자물쇠 해금 검사 (열쇠 색상이 단일색 4칸으로 정렬 완료되었는지)
+    for (const lockId in cur.gimmicks.lockedTubes) {
+      const lock = cur.gimmicks.lockedTubes[lockId];
+      if (lock.isLocked) {
+        const isKeyComplete = cur.tubes.some(t => t.length === CAPACITY && t.every(c => c === lock.keyColor));
+        if (isKeyComplete) {
+          lock.isLocked = false;
+          playSound("unlock");
+        }
+      }
+    }
 
     fromEl.style.transform = "";
     setTimeout(() => {
@@ -1677,13 +1510,13 @@ function executePour(fromIdx, toIdx) {
       const isCompleted = toT.length === CAPACITY && toT.every(c => c === toT[0]);
       if (isCompleted) playSound("complete");
 
-      renderInGameScreen();
-      checkGameStatus();
+      renderGame();
+      checkGameStatus(countdownExpired);
     }, 180);
   }, 260);
 }
 
-function checkGameStatus() {
+function checkGameStatus(countdownExpired = false) {
   const cur = State.cur;
   const isWon = cur.tubes.every(t => t.length === 0 || (t.length === CAPACITY && t.every(c => c === t[0])));
 
@@ -1696,7 +1529,6 @@ function checkGameStatus() {
     setTimeout(() => {
       playSound("win");
       const isKid = (State.mainMode === "kid");
-      $("win-badge-icon").textContent = isKid ? `✨${State.animal}🎉` : "🏆";
       $("win-title-txt").textContent = isKid ? t("kidClearTitle") : t("clearTitle");
       $("win-desc-txt").textContent = isKid
         ? t("kidClearMsg")
@@ -1715,45 +1547,74 @@ function checkGameStatus() {
     return;
   }
 
-  // 이동 횟수 소진 체크
-  if (!cur.isUnlimited && cur.moves >= cur.limitMoves) {
+  // 실패 판정: 이동 횟수 소진 또는 카운트다운 만료
+  const outOfMoves = (!cur.isUnlimited && cur.moves >= cur.limitMoves);
+  if (outOfMoves || countdownExpired) {
     setTimeout(() => {
       playSound("fail");
-      $("fail-title-txt").textContent = t("failTitle");
-      $("fail-desc-txt").textContent = t("failMsg", { tier: State.adultSub.toUpperCase(), limit: cur.limitMoves });
-      $("fail-retry-btn").onclick = () => {
-        $("modal-fail").classList.remove("active");
-        startGame(cur.level);
-      };
-      $("fail-mode-btn").onclick = () => {
-        $("modal-fail").classList.remove("active");
-        showView("view-mode");
-      };
-      $("modal-fail").classList.add("active");
+      openFailOfferModal();
     }, 320);
   }
 }
 
 /* ==========================================================================
-   이벤트 리스너 & 초기화
+   수익화: $4.99 Fail Offer (패배 즉시구제 모달 제어)
+   ========================================================================== */
+function openFailOfferModal() {
+  $("modal-fail-offer").classList.add("active");
+
+  // 1. $4.99 IAP 결제 구제
+  $("offer-buy-btn").onclick = () => {
+    playSound("click");
+    applyRescue(true); // +5회 이동 + 비상 병 1개
+  };
+
+  // 2. 무료 리워드 광고 구제
+  $("offer-ad-btn").onclick = () => {
+    playSound("click");
+    applyRescue(false); // +5회 이동
+  };
+
+  // 3. 포기하고 재시작
+  $("offer-giveup-btn").onclick = () => {
+    $("modal-fail-offer").classList.remove("active");
+    startGame(State.cur.level);
+  };
+}
+
+function applyRescue(includeEmergencyBottle = false) {
+  const cur = State.cur;
+  $("modal-fail-offer").classList.remove("active");
+
+  // 1. 이동 횟수 +5회 즉시 연장
+  cur.limitMoves += 5;
+
+  // 2. 비상용 빈 병 1개 필드에 즉시 스폰
+  if (includeEmergencyBottle) {
+    cur.tubes.push([]); // 완전한 빈 병 추가
+  }
+
+  playSound("complete");
+  renderGame();
+}
+
+/* ==========================================================================
+   초기화 바인딩
    ========================================================================== */
 window.addEventListener("DOMContentLoaded", () => {
-  // 1. 글로벌 '뒤로' 버튼
-  $("global-back-btn").onclick = handleGlobalBack;
+  $("global-back-btn").onclick = handleBack;
 
-  // 2. 다국어 세그먼트 버튼
   document.querySelectorAll(".lang-chip").forEach(chip => {
     chip.onclick = () => {
       State.lang = chip.dataset.lang;
       saveState();
       playSound("click");
       applyLanguage();
-      if (currentActiveView === "view-home") renderHomeScreen();
-      else if (currentActiveView === "view-game") renderInGameScreen();
+      if (currentView === "view-home") renderHome();
+      else if (currentView === "view-game") renderGame();
     };
   });
 
-  // 3. 동물 파트너 선택
   const animals = ["🐰", "🐱", "🐶", "🐻", "🐼", "🦊", "🐯", "🐸", "🐧", "🐨", "🦁", "🦄"];
   const anGrid = $("animal-grid");
   animals.forEach(a => {
@@ -1764,10 +1625,8 @@ window.addEventListener("DOMContentLoaded", () => {
       State.animal = a;
       saveState();
       playSound("click");
-      document.querySelectorAll(".animal-tile").forEach(t => t.classList.toggle("active", t.textContent === a));
       applyLanguage();
-      // 선택 후 직전 뷰로 부드럽게 복귀
-      setTimeout(() => handleGlobalBack(), 150);
+      setTimeout(() => handleBack(), 150);
     };
     anGrid.appendChild(tile);
   });
@@ -1777,7 +1636,6 @@ window.addEventListener("DOMContentLoaded", () => {
     showView("view-pick");
   };
 
-  // 4. 모드 선택 카드 (어린이 vs 어른)
   $("card-mode-kid").onclick = () => {
     State.mainMode = "kid";
     saveState();
@@ -1787,7 +1645,6 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   $("card-mode-adult").onclick = (e) => {
-    // 하위 티어 클릭 시 상위 카드 이벤트 버블링 방지
     if (e.target.closest(".tier-box")) return;
     State.mainMode = "adult";
     saveState();
@@ -1796,7 +1653,6 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => showHome(), 180);
   };
 
-  // 5. 어른 모드 3단계 하위 난이도 티어 버튼
   document.querySelectorAll(".tier-box").forEach(box => {
     box.onclick = (e) => {
       e.stopPropagation();
@@ -1809,7 +1665,6 @@ window.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  // 6. 홈 & 인게임 버튼
   $("home-change-mode-btn").onclick = () => {
     playSound("click");
     showView("view-mode");
@@ -1837,7 +1692,7 @@ window.addEventListener("DOMContentLoaded", () => {
     cur.moves = Math.max(0, cur.moves - 1);
     selectedTubeIdx = null;
     playSound("undo");
-    renderInGameScreen();
+    renderGame();
   };
 
   $("btn-sound").onclick = () => {
@@ -1853,7 +1708,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // 초기 시작 화면 구성
   applyLanguage();
   showHome();
 });
