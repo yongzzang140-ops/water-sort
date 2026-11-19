@@ -583,6 +583,19 @@ button { font: inherit; }
   display: flex; align-items: center; gap: 6px; margin: 3px 0;
 }
 
+#game-toast {
+  position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 20px);
+  max-width: 340px; width: calc(100% - 40px);
+  background: rgba(15, 23, 42, 0.92); color: #fff;
+  font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center;
+  padding: 12px 16px; border-radius: 16px;
+  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.4);
+  opacity: 0; pointer-events: none; z-index: 120;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#game-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -638,9 +651,9 @@ button { font: inherit; }
         <div class="mode-card-body">
           <p id="txt-kid-desc">병이 큼직하고 색상이 적어 쉽게 풀려요. 기믹이나 이동 제한 없이 동물 친구와 힐링하세요!</p>
           <div class="feature-pills">
-            <span class="feature-pill">✨ 색상 2~3종</span>
-            <span class="feature-pill">♾️ 이동 횟수 무제한</span>
-            <span class="feature-pill">🛡️ 기믹 없음</span>
+            <span class="feature-pill" data-i18n="kidPill1">✨ 색상 2~3종</span>
+            <span class="feature-pill" data-i18n="kidPill2">♾️ 이동 횟수 무제한</span>
+            <span class="feature-pill" data-i18n="kidPill3">🛡️ 기믹 없음</span>
           </div>
         </div>
       </div>
@@ -663,18 +676,18 @@ button { font: inherit; }
           <div class="adult-sub-tier-grid">
             <div class="tier-box active" data-sub="casual" style="--tier-color: var(--casual); --tier-bg: var(--casual-bg);">
               <span class="tier-badge">CASUAL</span>
-              <b>일반</b>
+              <b data-i18n="tierCasual">일반</b>
               <small>M_opt + 15</small>
             </div>
             <div class="tier-box" data-sub="pro" style="--tier-color: var(--pro); --tier-bg: var(--pro-bg);">
               <span class="tier-badge">PRO</span>
-              <b>프로</b>
+              <b data-i18n="tierPro">프로</b>
               <small>M_opt + 3</small>
             </div>
             <div class="tier-box" data-sub="hell" style="--tier-color: var(--hell); --tier-bg: var(--hell-bg);">
               <span class="tier-badge" style="background:#EF4444;">🔥 HELL</span>
-              <b>헬 (지옥)</b>
-              <small>빈 병 1개 · 오차 0</small>
+              <b data-i18n="tierHell">헬 (지옥)</b>
+              <small data-i18n="tierHellSub">빈 병 1개 · 오차 0</small>
             </div>
           </div>
         </div>
@@ -690,8 +703,8 @@ button { font: inherit; }
         <div class="hero-stage-count" id="home-progress-txt">Stage 1 / 30</div>
       </div>
       <div style="display:flex; gap:8px;">
-        <button class="btn-secondary-3d" id="home-change-mode-btn">⚙️ 모드</button>
-        <button class="btn-primary-3d" id="home-play-btn" style="padding:10px 18px; font-size:15px;">▶ 플레이</button>
+        <button class="btn-secondary-3d" id="home-change-mode-btn" data-i18n="btnMode">⚙️ 모드</button>
+        <button class="btn-primary-3d" id="home-play-btn" style="padding:10px 18px; font-size:15px;" data-i18n="btnPlay">▶ 플레이</button>
       </div>
     </div>
 
@@ -712,7 +725,7 @@ button { font: inherit; }
       </div>
       <div class="dash-stats">
         <div class="dash-moves-main">
-          <span>이동</span>: <strong id="dash-moves-used">0</strong> <span id="dash-moves-limit">/ 15</span>
+          <span data-i18n="moves">이동</span>: <strong id="dash-moves-used">0</strong> <span id="dash-moves-limit">/ 15</span>
         </div>
         <div class="dash-opt-sub" id="dash-opt-txt">Optimal: 6 moves</div>
       </div>
@@ -736,10 +749,10 @@ button { font: inherit; }
         <span>↩️</span> <span id="txt-undo">되돌리기</span>
       </button>
       <button class="ctrl-pill-btn" id="btn-add-tube">
-        <span>🧪</span> <span id="txt-add-tube">+ 튜브</span>
+        <span>🧪</span> <span id="txt-add-tube" data-i18n="addTube">+ 튜브</span>
       </button>
       <button class="ctrl-pill-btn" id="btn-shuffle">
-        <span>🔀</span> <span id="txt-shuffle">셔플</span>
+        <span>🔀</span> <span id="txt-shuffle" data-i18n="shuffle">셔플</span>
       </button>
       <button class="ctrl-pill-btn" id="btn-restart">
         <span>🔄</span> <span id="txt-restart">재시작</span>
@@ -769,18 +782,18 @@ button { font: inherit; }
   <div class="modal-window">
     <div style="font-size:48px; margin-bottom:4px;">🚨</div>
     <h2 class="modal-title" style="color:#EF4444;" id="fail-title">이동 횟수 소진!</h2>
-    <p style="color:var(--ink-secondary); font-size:13px; line-height:1.4;">
+    <p style="color:var(--ink-secondary); font-size:13px; line-height:1.4;" data-i18n-html="failOfferDesc">
       허용된 이동 횟수를 모두 소진했습니다.<br>지금 즉시 구제 패키지로 클리어를 이어가세요!
     </p>
 
     <!-- $4.99 Fail Offer 패키지 박스 -->
     <div class="fail-offer-banner">
       <div class="fail-offer-title">
-        <span>🎁 즉시 구제 패키지</span>
+        <span data-i18n="failPackage">🎁 즉시 구제 패키지</span>
         <span style="background:#F59E0B; color:white; padding:2px 8px; border-radius:8px; font-size:12px;">$4.99</span>
       </div>
-      <div class="fail-offer-perk">✨ <strong>+5회 추가 이동</strong> 즉시 연장</div>
-      <div class="fail-offer-perk">🧪 <strong>비상 빈 병 1개</strong> 즉시 획득</div>
+      <div class="fail-offer-perk" data-i18n-html="perk1">✨ <strong>+5회 추가 이동</strong> 즉시 연장</div>
+      <div class="fail-offer-perk" data-i18n-html="perk2">🧪 <strong>비상 빈 병 1개</strong> 즉시 획득</div>
     </div>
 
     <!-- 결제 버튼 -->
@@ -833,7 +846,20 @@ const I18N = {
     failOfferDesc: "허용된 이동 횟수를 모두 소진했습니다.<br>지금 즉시 구제 패키지로 클리어를 이어가세요!",
     buyOffer: "💳 $4.99 즉시 구제 (+5회 & 비상 병)",
     watchAd: "🎬 광고 보고 +5회 이동 연장",
-    giveUp: "포기하고 처음부터 다시 시도"
+    giveUp: "포기하고 처음부터 다시 시도",
+    kidPill1: "✨ 색상 2~3종",
+    kidPill2: "♾️ 이동 횟수 무제한",
+    kidPill3: "🛡️ 기믹 없음",
+    tierCasual: "일반", tierPro: "프로", tierHell: "헬 (지옥)",
+    tierHellSub: "빈 병 1개 · 오차 0",
+    subCasual: "일반", subPro: "프로", subHell: "헬",
+    btnMode: "⚙️ 모드", btnPlay: "▶ 플레이",
+    addTube: "+ 튜브", shuffle: "셔플",
+    failPackage: "🎁 즉시 구제 패키지",
+    perk1: "✨ <strong>+5회 추가 이동</strong> 즉시 연장",
+    perk2: "🧪 <strong>비상 빈 병 1개</strong> 즉시 획득",
+    lockedMsg: "🔒 잠긴 병이에요! {swatch} 색 4칸을 한 병에 모으면 열려요.",
+    noMoveMsg: "현재 가능한 이동이 없습니다! 튜브를 추가하거나 되돌리기를 사용하세요."
   },
   ja: {
     back: "もどる",
@@ -863,7 +889,20 @@ const I18N = {
     failOfferDesc: "制限手数をすべて消費しました。<br>救済パッケージでクリアを目指しましょう!",
     buyOffer: "💳 $4.99 即時救済 (+5手＆非常用ボトル)",
     watchAd: "🎬 広告を見て+5手延長",
-    giveUp: "諦めて最初からやり直す"
+    giveUp: "諦めて最初からやり直す",
+    kidPill1: "✨ 色2〜3種",
+    kidPill2: "♾️ 手数無制限",
+    kidPill3: "🛡️ ギミックなし",
+    tierCasual: "ふつう", tierPro: "プロ", tierHell: "ヘル (地獄)",
+    tierHellSub: "空きびん1本・ミス許容0",
+    subCasual: "ふつう", subPro: "プロ", subHell: "ヘル",
+    btnMode: "⚙️ モード", btnPlay: "▶ プレイ",
+    addTube: "+ びん", shuffle: "シャッフル",
+    failPackage: "🎁 即時救済パッケージ",
+    perk1: "✨ <strong>+5手追加</strong>を即時付与",
+    perk2: "🧪 <strong>非常用の空きびん1本</strong>を即時獲得",
+    lockedMsg: "🔒 ロックされたびんです! {swatch} の色を4つ1本にそろえると開きます。",
+    noMoveMsg: "今できる移動がありません! びんを追加するか、1つ戻してください。"
   },
   en: {
     back: "Back",
@@ -893,7 +932,20 @@ const I18N = {
     failOfferDesc: "You reached the limit of moves.<br>Continue solving with the instant rescue package!",
     buyOffer: "💳 $4.99 Instant Rescue (+5 Moves & Extra Tube)",
     watchAd: "🎬 Watch Ad for +5 Moves",
-    giveUp: "Give Up and Retry"
+    giveUp: "Give Up and Retry",
+    kidPill1: "✨ 2–3 colors",
+    kidPill2: "♾️ Unlimited moves",
+    kidPill3: "🛡️ No gimmicks",
+    tierCasual: "Casual", tierPro: "Pro", tierHell: "Hell (Inferno)",
+    tierHellSub: "1 empty tube · 0 spare",
+    subCasual: "Casual", subPro: "Pro", subHell: "Hell",
+    btnMode: "⚙️ Mode", btnPlay: "▶ Play",
+    addTube: "+ Tube", shuffle: "Shuffle",
+    failPackage: "🎁 Instant Rescue Package",
+    perk1: "✨ <strong>+5 extra moves</strong> instantly",
+    perk2: "🧪 <strong>1 emergency empty tube</strong> instantly",
+    lockedMsg: "🔒 This tube is locked! Collect 4 layers of {swatch} in one tube to unlock it.",
+    noMoveMsg: "No moves available! Add a tube or undo."
   }
 };
 
@@ -934,13 +986,48 @@ let State = {
   previousView: "view-home"
 };
 
-try {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) State = Object.assign(State, JSON.parse(saved));
-} catch(e) {}
+/* ==========================================================================
+   저장 데이터 호환 (버전이 올라가도 클리어 기록 유지)
+   - STORAGE_KEY는 절대 바꾸지 말 것 (바꾸면 기존 기록이 사라짐)
+   - 새 필드는 기본값으로 채우고, 클리어 기록(cleared)은 모드별로 그대로 합침
+   - 진행 중이던 판(cur)은 복원하지 않음 (새 버전 기믹 구조와 충돌 방지)
+   ========================================================================== */
+const SAVE_VERSION = 1;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== "object") return;
+
+    // 설정값(언어, 동물, 모드, 소리 등) 복원
+    ["lang", "animal", "mainMode", "adultSub", "mute"].forEach(k => {
+      if (saved[k] !== undefined) State[k] = saved[k];
+    });
+
+    // 클리어 기록: 저장된 모드 키를 모두 보존 (새 모드가 추가돼도 안전)
+    if (saved.cleared && typeof saved.cleared === "object") {
+      for (const modeKey in saved.cleared) {
+        const src = saved.cleared[modeKey] || {};
+        const dst = {};
+        for (const stage in src) {
+          if (typeof src[stage] === "number") dst[stage] = src[stage];
+        }
+        State.cleared[modeKey] = dst;
+      }
+    }
+  } catch(e) {}
+  State.cur = null;
+  State.previousView = "view-home";
+}
+loadState();
 
 function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(State)); } catch(e) {}
+  try {
+    State.version = SAVE_VERSION;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(State));
+  } catch(e) {}
 }
 
 const $ = id => document.getElementById(id);
@@ -1169,10 +1256,28 @@ function generateStage(stageNum) {
       gimmicks.frozenLayers[1] = 2; // 2타에 걸쳐 녹는 얼음
     }
     // 3. 자물쇠 튜브 (Stage 8 이상)
-    if (stageNum >= 8 && bestTubes.length >= 5) {
-      const lockIdx = bestTubes.length - 2;
-      const keyCol = bestTubes[0][bestTubes[0].length - 1];
-      gimmicks.lockedTubes[lockIdx] = { isLocked: true, keyColor: keyCol };
+    // 잠금은 "빈 병"에만 걸어 열쇠 색 액체가 갇히는 일이 없게 한다.
+    // 잠긴 병을 뺀 나머지 병들만으로 판이 풀리는지 솔버로 확인하고, 안 풀리면 잠금을 걸지 않는다.
+    if (stageNum >= 8 && bestTubes.length >= 5 && emptyCount >= 2) {
+      const lockCandidates = [];
+      bestTubes.forEach((tb, i) => { if (tb.length === 0 && i > 2) lockCandidates.push(i); });
+      if (lockCandidates.length > 0) {
+        const lockIdx = lockCandidates[lockCandidates.length - 1];
+        const rest = bestTubes.filter((_, i) => i !== lockIdx);
+        const restOpt = WaterSortSolver.solve(rest);
+        // 이미 완성된 색은 열쇠로 쓰지 않는다(시작하자마자 풀리는 것 방지)
+        const keyCandidates = [];
+        for (let c = 0; c < colorCount; c++) {
+          const done = bestTubes.some(tb => tb.length === CAPACITY && tb.every(x => x === c));
+          if (!done) keyCandidates.push(c);
+        }
+        if (restOpt > 0 && keyCandidates.length > 0) {
+          const keyCol = keyCandidates[Math.floor(Math.random() * keyCandidates.length)];
+          gimmicks.lockedTubes[lockIdx] = { isLocked: true, keyColor: keyCol };
+          // 잠긴 병을 쓰지 않고 푸는 최단수로 기준을 잡는다(실제 최적수보다 같거나 크므로 안전)
+          bestMopt = Math.max(bestMopt, restOpt);
+        }
+      }
     }
     // 4. 카운트다운 액체 (Stage 10 이상 또는 Hell 모드)
     if (stageNum >= 10 || State.adultSub === "hell") {
@@ -1268,6 +1373,10 @@ function applyLanguage() {
   $("offer-ad-btn").textContent = t("watchAd");
   $("offer-giveup-btn").textContent = t("giveUp");
 
+  // data-i18n / data-i18n-html 속성이 붙은 요소를 일괄 번역
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+
   document.body.classList.toggle("kid", State.mainMode === "kid");
   updateModeVisuals();
 }
@@ -1293,7 +1402,7 @@ function renderHome() {
     pill.style.background = "var(--kid-bg)";
     pill.style.color = "var(--kid-color)";
   } else {
-    const subTitle = State.adultSub === "casual" ? "일반" : (State.adultSub === "pro" ? "프로" : "헬");
+    const subTitle = State.adultSub === "casual" ? t("subCasual") : (State.adultSub === "pro" ? t("subPro") : t("subHell"));
     const color = State.adultSub === "casual" ? "var(--casual)" : (State.adultSub === "pro" ? "var(--pro)" : "var(--hell)");
     const bg = State.adultSub === "casual" ? "var(--casual-bg)" : (State.adultSub === "pro" ? "var(--pro-bg)" : "var(--hell-bg)");
     pill.textContent = `🧑 ${t("adultName")} · ${subTitle}`;
@@ -1412,7 +1521,7 @@ function renderGame() {
       const keyCol = cur.gimmicks.lockedTubes[idx].keyColor;
       lockOverlay.innerHTML = `
         <div class="lock-icon-badge">🔒</div>
-        <div class="lock-key-badge" style="background:${PASTEL_PALETTE[keyCol] || '#6366F1'};">KEY</div>
+        <div class="lock-key-badge" style="background:${PASTEL_PALETTE[keyCol] || '#6366F1'};">🔑 KEY</div>
       `;
       flask.appendChild(lockOverlay);
     }
@@ -1464,7 +1573,9 @@ function onFlaskClick(clickedIdx) {
   // 1. 자물쇠 기믹 검사
   if (cur.gimmicks.lockedTubes[clickedIdx] && cur.gimmicks.lockedTubes[clickedIdx].isLocked) {
     playSound("click");
-    alert("🔒 이 병은 자물쇠로 잠겨있습니다! 열쇠 색상을 완성하여 해금하세요.");
+    const keyCol = cur.gimmicks.lockedTubes[clickedIdx].keyColor;
+    const swatch = `<span style="display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;border:2px solid #fff;background:${PASTEL_PALETTE[keyCol % PASTEL_PALETTE.length]};"></span>`;
+    showToast(t("lockedMsg").replace("{swatch}", swatch));
     return;
   }
 
@@ -1516,6 +1627,20 @@ function onFlaskClick(clickedIdx) {
       renderGame();
     }
   }
+}
+
+let toastTimer = null;
+function showToast(html) {
+  let el = document.getElementById("game-toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "game-toast";
+    document.body.appendChild(el);
+  }
+  el.innerHTML = html;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
 }
 
 function canPour(fromT, toT) {
@@ -1884,7 +2009,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
-    alert("현재 가능한 이동이 없습니다! 튜브를 추가하거나 되돌리기를 사용하세요.");
+    alert(t("noMoveMsg"));
   };
 
   $("btn-sound").onclick = () => {
