@@ -483,7 +483,8 @@ button { font: inherit; }
 
 /* 2025-2026 트렌디 네온-파스텔 액체 레이어 */
 .liquid-seg {
-  flex: 1; border-radius: 4px 4px 20px 20px;
+  /* 병 용량(CAPACITY=4) 기준 1칸 높이 고정: (전체 - 칸 사이 gap 3px×3) / 4 */
+  flex: 0 0 calc((100% - 9px) / 4); border-radius: 4px 4px 20px 20px;
   position: relative; overflow: hidden;
   transition: height 0.25s ease;
   box-shadow: inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -3px 5px rgba(0,0,0,0.12);
@@ -596,6 +597,83 @@ button { font: inherit; }
 }
 #game-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* ==========================================================================
+   첫 실행 튜토리얼 (인터랙티브 코치마크)
+   ========================================================================== */
+#tutorial-layer { position: fixed; inset: 0; z-index: 110; pointer-events: none; }
+#tut-dim {
+  position: absolute; inset: 0; pointer-events: auto;
+  background: rgba(15, 23, 42, 0.5);
+}
+#tut-spot {
+  position: fixed; border-radius: 30px; pointer-events: none; z-index: 111;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.62), 0 0 24px 4px rgba(255, 255, 255, 0.55);
+  transition: left .25s ease, top .25s ease, width .25s ease, height .25s ease;
+  animation: tutPulse 1.3s ease-in-out infinite;
+}
+@keyframes tutPulse { 50% { border-color: rgba(255,255,255,.45); } }
+#tut-finger {
+  position: fixed; z-index: 112; pointer-events: none;
+  font-size: 46px; line-height: 1; margin-left: -23px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+  animation: tutTap 1s ease-in-out infinite;
+}
+@keyframes tutTap { 0%, 100% { margin-top: 0; } 50% { margin-top: -14px; } }
+.tut-kid #tut-finger { font-size: 64px; margin-left: -32px; }
+
+#tut-card {
+  position: fixed; left: 0; right: 0; margin: 0 auto; z-index: 113;
+  top: calc(64px + env(safe-area-inset-top, 0px));
+  width: min(440px, calc(100% - 28px));
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 2px solid #fff; border-radius: 28px;
+  padding: 14px 18px 14px; color: #1E293B; text-align: center;
+  box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.4);
+  pointer-events: auto;
+}
+#tut-card.pop { animation: modalElasticPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1); }
+#tut-card.shake { animation: tutShake 0.4s ease; }
+@keyframes tutShake { 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+.tut-head { display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; }
+#tut-buddy { font-size: 40px; display: inline-block; animation: bob 1.6s ease-in-out infinite alternate; }
+.tut-kid #tut-buddy { font-size: 58px; }
+#tut-speak {
+  position: absolute; right: 0; top: 4px; width: 46px; height: 46px; border-radius: 50%;
+  border: 2px solid var(--line); background: #fff; font-size: 22px; cursor: pointer;
+}
+#tut-text { text-wrap: balance; word-break: keep-all; margin-top: 6px; font-size: 15px; font-weight: 700; line-height: 1.55; }
+.tut-kid #tut-text { font-size: 23px; font-weight: 800; line-height: 1.4; }
+#tut-extra { margin-top: 8px; }
+.tut-lang-row { display: flex; gap: 6px; justify-content: center; }
+.tut-lang-chip {
+  border: 1.5px solid var(--line); background: #fff; color: #64748B;
+  font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+}
+.tut-lang-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.tut-rules { list-style: none; text-align: left; font-size: 13px; font-weight: 700; line-height: 1.5; color: #475569; }
+.tut-rules li { padding: 4px 0; }
+#tut-next { width: 100%; margin-top: 10px; }
+.tut-kid #tut-next { font-size: 21px; padding: 18px 20px; border-radius: 24px; }
+#tut-dots { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+#tut-dots span { width: 8px; height: 8px; border-radius: 50%; background: #CBD5E1; transition: all .2s ease; }
+#tut-dots span.done { background: #A5B4FC; }
+#tut-dots span.on { background: var(--primary); width: 20px; border-radius: 6px; }
+#tut-skip {
+  position: fixed; left: 0; right: 0; margin: 0 auto; width: max-content; z-index: 113;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  pointer-events: auto; font-size: 12px; padding: 8px 18px;
+}
+/* 튜토리얼 중에는 튜토리얼 밖의 조작을 막는다 */
+.tutorial-on .top-header, .tutorial-on .ingame-dashboard, .tutorial-on .ingame-control-bar { pointer-events: none; }
+.tutorial-on .ingame-control-bar { opacity: 0.4; }
+/* 안내 카드가 병 윗부분(맨 위 색, 들어 올린 병)을 가리지 않도록 보드를 아래로 내림 */
+.tutorial-on .tubes-canvas { padding-top: 84px; }
+@media (prefers-reduced-motion: reduce) {
+  #tut-finger, #tut-spot, #tut-buddy { animation: none; }
+}
+
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -616,7 +694,10 @@ button { font: inherit; }
       </div>
     </div>
 
-    <button class="avatar-badge-btn" id="avatar-trigger-btn" title="Choose Partner">🐰</button>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="avatar-badge-btn" id="help-btn" title="How to play">❓</button>
+      <button class="avatar-badge-btn" id="avatar-trigger-btn" title="Choose Partner">🐰</button>
+    </div>
   </header>
 
   <!-- 동물 친구 선택 뷰 -->
@@ -813,6 +894,24 @@ button { font: inherit; }
   </div>
 </div>
 
+<!-- 첫 실행 튜토리얼 레이어 -->
+<div id="tutorial-layer" hidden>
+  <div id="tut-dim" hidden></div>
+  <div id="tut-spot" hidden></div>
+  <div id="tut-finger" hidden>👆</div>
+  <div id="tut-card">
+    <div class="tut-head">
+      <span id="tut-buddy">🐰</span>
+      <button id="tut-speak" aria-label="Read aloud" hidden>🔊</button>
+    </div>
+    <div id="tut-text"></div>
+    <div id="tut-extra"></div>
+    <button class="btn-primary-3d" id="tut-next" hidden></button>
+    <div id="tut-dots"></div>
+  </div>
+  <button class="btn-secondary-3d" id="tut-skip">건너뛰기</button>
+</div>
+
 <script>
 /* ==========================================================================
    다국어 사전 (ko, ja, en)
@@ -858,8 +957,27 @@ const I18N = {
     failPackage: "🎁 즉시 구제 패키지",
     perk1: "✨ <strong>+5회 추가 이동</strong> 즉시 연장",
     perk2: "🧪 <strong>비상 빈 병 1개</strong> 즉시 획득",
-    lockedMsg: "🔒 잠긴 병이에요! {swatch} 색 4칸을 한 병에 모으면 열려요.",
-    noMoveMsg: "현재 가능한 이동이 없습니다! 튜브를 추가하거나 되돌리기를 사용하세요."
+    lockedMsg: "🔒 잠긴 병이에요! {swatch} 4칸을 한 병에 모으면 열려요.",
+    noMoveMsg: "현재 가능한 이동이 없습니다! 튜브를 추가하거나 되돌리기를 사용하세요.",
+    colorNames: ["분홍색", "민트색", "라일락색", "복숭아색", "하늘색", "레몬색", "코랄색", "청보라색", "초록색", "파란색", "살구색", "연보라색"],
+    tutTitle: "튜토리얼", tutStart: "시작하기 ▶", tutPlay: "게임 시작! ▶", tutSkip: "건너뛰기", tutHelp: "게임 방법",
+    tutIntroKid: "안녕! 같은 색끼리 모아 볼까? 🎨",
+    tutSel1Kid: "이 병을 톡! 눌러 봐 👆",
+    tutPour1Kid: "이제 여기에 톡! 💧",
+    tutNice1Kid: "우와! 한 병이 가득 찼어! 🎉",
+    tutSel2Kid: "이번엔 이 병을 톡! 👆",
+    tutPour2Kid: "같은 색 병에 톡! 💧",
+    tutOutroKid: "최고야! 이제 진짜 게임 해 볼까? ⭐⭐⭐",
+    tutIntroAdult: "<b>물붓기 퍼즐</b>에 오신 걸 환영해요!<br>같은 색 4칸을 한 병에 모으면 클리어예요.",
+    tutSel1Adult: "① 먼저 <b>옮길 병</b>을 탭하세요.<br>맨 위의 색이 움직여요.",
+    tutPour1Adult: "② 이제 <b>부을 병</b>을 탭하세요.<br>같은 색이거나 빈 병에만 부을 수 있어요.",
+    tutNice1Adult: "한 병 완성! 👏",
+    tutSel2Adult: "남은 색도 같은 방법으로 모아 보세요.",
+    tutPour2Adult: "같은 색 위에 부으면 돼요.",
+    tutOutroAdult: "준비 완료! 알아 두면 좋은 것들",
+    tutRule1: "🎯 이동 횟수에 제한이 있어요 (최적수 + 여유)",
+    tutRule2: "↩️ 되돌리기와 🧪 +튜브로 막힌 판을 풀 수 있어요",
+    tutRule3: "🔒🧊⏱️ 단계가 오르면 특수 기믹이 나타나요"
   },
   ja: {
     back: "もどる",
@@ -901,8 +1019,27 @@ const I18N = {
     failPackage: "🎁 即時救済パッケージ",
     perk1: "✨ <strong>+5手追加</strong>を即時付与",
     perk2: "🧪 <strong>非常用の空きびん1本</strong>を即時獲得",
-    lockedMsg: "🔒 ロックされたびんです! {swatch} の色を4つ1本にそろえると開きます。",
-    noMoveMsg: "今できる移動がありません! びんを追加するか、1つ戻してください。"
+    lockedMsg: "🔒 ロックされたびんです! {swatch}を4つ1本にそろえると開きます。",
+    noMoveMsg: "今できる移動がありません! びんを追加するか、1つ戻してください。",
+    colorNames: ["ピンク", "ミント", "ライラック", "ピーチ", "スカイブルー", "レモン", "コーラル", "ペリウィンクル", "グリーン", "ブルー", "アプリコット", "ラベンダー"],
+    tutTitle: "チュートリアル", tutStart: "はじめる ▶", tutPlay: "ゲームスタート! ▶", tutSkip: "スキップ", tutHelp: "あそびかた",
+    tutIntroKid: "こんにちは! おなじ いろを あつめよう! 🎨",
+    tutSel1Kid: "この びんを トン! してね 👆",
+    tutPour1Kid: "つぎは ここに トン! 💧",
+    tutNice1Kid: "わあ! いっぱいに なったよ! 🎉",
+    tutSel2Kid: "こんどは この びんを トン! 👆",
+    tutPour2Kid: "おなじ いろの びんに トン! 💧",
+    tutOutroKid: "さいこう! ほんものの ゲームを やってみよう! ⭐⭐⭐",
+    tutIntroAdult: "<b>ウォーターソート</b>へようこそ!<br>同じ色を4つ、1本のびんにそろえればクリアです。",
+    tutSel1Adult: "① まず<b>移すびん</b>をタップ。<br>いちばん上の色が動きます。",
+    tutPour1Adult: "② 次に<b>注ぐびん</b>をタップ。<br>同じ色の上か、空のびんにだけ注げます。",
+    tutNice1Adult: "1本完成! 👏",
+    tutSel2Adult: "残りの色も同じ方法で集めましょう。",
+    tutPour2Adult: "同じ色の上に注ぎます。",
+    tutOutroAdult: "準備完了! 知っておくと便利なこと",
+    tutRule1: "🎯 手数に制限があります(最短手数＋余裕)",
+    tutRule2: "↩️ 1つ戻す・🧪 +びんで行き詰まりを解消できます",
+    tutRule3: "🔒🧊⏱️ ステージが進むと特殊ギミックが登場します"
   },
   en: {
     back: "Back",
@@ -945,7 +1082,26 @@ const I18N = {
     perk1: "✨ <strong>+5 extra moves</strong> instantly",
     perk2: "🧪 <strong>1 emergency empty tube</strong> instantly",
     lockedMsg: "🔒 This tube is locked! Collect 4 layers of {swatch} in one tube to unlock it.",
-    noMoveMsg: "No moves available! Add a tube or undo."
+    noMoveMsg: "No moves available! Add a tube or undo.",
+    colorNames: ["Pink", "Mint", "Lilac", "Peach", "Sky Blue", "Lemon", "Coral", "Periwinkle", "Emerald", "Ocean Blue", "Apricot", "Lavender"],
+    tutTitle: "Tutorial", tutStart: "Start ▶", tutPlay: "Let's Play! ▶", tutSkip: "Skip", tutHelp: "How to play",
+    tutIntroKid: "Hi! Let's put the same colors together! 🎨",
+    tutSel1Kid: "Tap this bottle! 👆",
+    tutPour1Kid: "Now tap here! 💧",
+    tutNice1Kid: "Wow! The bottle is full! 🎉",
+    tutSel2Kid: "Now tap this one! 👆",
+    tutPour2Kid: "Tap the same color! 💧",
+    tutOutroKid: "You're a star! Ready to play? ⭐⭐⭐",
+    tutIntroAdult: "Welcome to <b>Water Sort</b>!<br>Gather 4 layers of the same color in one tube to win.",
+    tutSel1Adult: "① Tap a <b>tube</b> to pick it up.<br>Its top color will move.",
+    tutPour1Adult: "② Now tap <b>where to pour</b>.<br>Only onto the same color or an empty tube.",
+    tutNice1Adult: "One tube done! 👏",
+    tutSel2Adult: "Do the same for the remaining color.",
+    tutPour2Adult: "Pour it onto the matching color.",
+    tutOutroAdult: "You're ready! A few things to know",
+    tutRule1: "🎯 Moves are limited (optimal + a margin)",
+    tutRule2: "↩️ Undo and 🧪 +Tube help when you're stuck",
+    tutRule3: "🔒🧊⏱️ Special gimmicks appear as stages go up"
   }
 };
 
@@ -976,11 +1132,16 @@ const CAPACITY = 4;
 const STORAGE_KEY = "waterSort_phase2_commercial";
 
 let State = {
-  lang: "ko",
+  // 처음 실행이면 기기 언어를 따름 (저장된 값이 있으면 아래 loadState가 덮어씀)
+  lang: (function () {
+    const l = ((navigator.language || "ko") + "").toLowerCase();
+    return l.indexOf("ja") === 0 ? "ja" : (l.indexOf("ko") === 0 ? "ko" : "en");
+  })(),
   animal: "🐰",
   mainMode: "adult",   // "kid" or "adult"
   adultSub: "casual",  // "casual", "pro", "hell"
   cleared: { kid: {}, adult_casual: {}, adult_pro: {}, adult_hell: {} },
+  tutorialDone: { kid: false, adult: false },
   cur: null,
   mute: false,
   previousView: "view-home"
@@ -1017,6 +1178,15 @@ function loadState() {
         State.cleared[modeKey] = dst;
       }
     }
+
+    // 튜토리얼 완료 여부 (이미 플레이한 기록이 있으면 완료로 간주 → 기존 유저에게 튜토리얼이 뜨지 않음)
+    if (saved.tutorialDone && typeof saved.tutorialDone === "object") {
+      State.tutorialDone.kid = !!saved.tutorialDone.kid;
+      State.tutorialDone.adult = !!saved.tutorialDone.adult;
+    }
+    const hasClears = (k) => Object.keys(State.cleared[k] || {}).length > 0;
+    if (hasClears("kid")) State.tutorialDone.kid = true;
+    if (hasClears("adult_casual") || hasClears("adult_pro") || hasClears("adult_hell")) State.tutorialDone.adult = true;
   } catch(e) {}
   State.cur = null;
   State.previousView = "view-home";
@@ -1204,13 +1374,22 @@ function generateStage(stageNum) {
   let bestTubes = null;
   let bestMopt = -1;
 
-  for (let attempt = 0; attempt < 8; attempt++) {
+  // 헬: 빈 병 1개라 무작위 판의 대부분이 쉽거나 풀 수 없다.
+  // 많이 섞고 여러 번 뽑아서(솔버가 빨라 가능) 가장 어려운 풀 수 있는 판을 고른다.
+  const isHell = State.mainMode === "adult" && State.adultSub === "hell";
+  const maxAttempts = isHell ? 120 : 8;
+  const shuffleSteps = isHell ? 150 : 30 + colorCount * 6;
+  const targetMopt = isHell ? colorCount + 5 : 4;
+  const genStart = performance.now();
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (isHell && bestTubes && performance.now() - genStart > 400) break; // 생성 시간 상한
     const tubes = [];
     for (let c = 0; c < colorCount; c++) tubes.push([c, c, c, c]);
     for (let e = 0; e < emptyCount; e++) tubes.push([]);
 
     const total = tubes.length;
-    const steps = 30 + (colorCount * 6);
+    const steps = shuffleSteps;
 
     for (let s = 0; s < steps; s++) {
       const from = Math.floor(Math.random() * total);
@@ -1226,7 +1405,7 @@ function generateStage(stageNum) {
         bestMopt = mOpt;
         bestTubes = tubes;
       }
-      if (mOpt >= 4) break;
+      if (mOpt >= targetMopt) break;
     }
   }
 
@@ -1282,11 +1461,15 @@ function generateStage(stageNum) {
     // 4. 카운트다운 액체 (Stage 10 이상 또는 Hell 모드)
     if (stageNum >= 10 || State.adultSub === "hell") {
       const cdIdx = Math.min(2, bestTubes.length - 3);
-      gimmicks.countdownTubes[cdIdx] = (State.adultSub === "hell") ? 10 : 15;
+      // 카운트다운은 "최적수 + 여유"로 정한다 (고정값이면 헬에서 이길 수 없는 판이 생김)
+      const cdMargin = State.adultSub === "hell" ? 3 : (State.adultSub === "pro" ? 5 : 8);
+      gimmicks.countdownTubes[cdIdx] = bestMopt + cdMargin;
     }
   }
 
-  const limitMoves = isUnlimited ? 0 : (bestMopt + deltaMoves);
+  // 얼음을 깨는 첫 시도는 이동 1회를 소모하므로, 이동 제한에 그만큼 더해 준다
+  const frozenExtra = Object.keys(gimmicks.frozenLayers).reduce((a, k) => a + Math.max(0, gimmicks.frozenLayers[k] - 1), 0);
+  const limitMoves = isUnlimited ? 0 : (bestMopt + deltaMoves + frozenExtra);
   return {
     tubes: bestTubes,
     optimalMoves: bestMopt,
@@ -1313,6 +1496,7 @@ function showView(viewId, record = true) {
 
   const showBack = (viewId === "view-pick" || viewId === "view-mode");
   $("global-back-btn").style.display = showBack ? "inline-flex" : "none";
+  $("help-btn").style.display = (viewId === "view-game") ? "none" : "flex";
 
   $("modal-win").classList.remove("active");
   $("modal-fail-offer").classList.remove("active");
@@ -1352,6 +1536,7 @@ function applyLanguage() {
     c.classList.toggle("active", c.dataset.lang === State.lang);
   });
   $("avatar-trigger-btn").textContent = State.animal;
+  $("help-btn").title = t("tutHelp");
 
   $("pick-title").textContent = t("pickTitle");
   $("pick-desc").textContent = t("pickDesc");
@@ -1475,7 +1660,7 @@ function startGame(stageNum) {
 
 function renderGame() {
   const cur = State.cur;
-  $("dash-stage-num").textContent = t("stage", { n: cur.level });
+  $("dash-stage-num").textContent = cur.tutorial ? t("tutTitle") : t("stage", { n: cur.level });
 
   const badge = $("dash-tier-badge");
   if (State.mainMode === "kid") {
@@ -1570,12 +1755,16 @@ function onFlaskClick(clickedIdx) {
   if (isBusy) return;
   const cur = State.cur;
 
+  // 튜토리얼 중에는 안내된 병만 누를 수 있다
+  if (Tut.active && !tutAllowClick(clickedIdx)) { tutNudge(); return; }
+
   // 1. 자물쇠 기믹 검사
   if (cur.gimmicks.lockedTubes[clickedIdx] && cur.gimmicks.lockedTubes[clickedIdx].isLocked) {
     playSound("click");
     const keyCol = cur.gimmicks.lockedTubes[clickedIdx].keyColor;
     const swatch = `<span style="display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;border:2px solid #fff;background:${PASTEL_PALETTE[keyCol % PASTEL_PALETTE.length]};"></span>`;
-    showToast(t("lockedMsg").replace("{swatch}", swatch));
+    const colorNames = (I18N[State.lang] || I18N.ko).colorNames;
+    showToast(t("lockedMsg").replace("{swatch}", swatch + " " + colorNames[keyCol % colorNames.length]));
     return;
   }
 
@@ -1585,6 +1774,7 @@ function onFlaskClick(clickedIdx) {
       selectedTubeIdx = clickedIdx;
       playSound("select");
       renderGame();
+      tutAdvanceIf("select");
     }
     return;
   }
@@ -1740,6 +1930,7 @@ function executePour(fromIdx, toIdx) {
       }
 
       renderGame();
+      tutAdvanceIf("pour");
       checkGameStatus(countdownExpired);
     }, 180);
   }, 260);
@@ -1790,7 +1981,7 @@ function spawnSparkles(containerEl, glowColor) {
     sp.style.top = `${rect.top + (Math.random() * 40 - 20)}px`;
     sp.style.fontSize = `${16 + Math.random() * 12}px`;
     sp.style.pointerEvents = "none";
-    sp.style.zIndex = "105";
+    sp.style.zIndex = "115";
     sp.style.transition = "all 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
     document.body.appendChild(sp);
 
@@ -1805,6 +1996,7 @@ function spawnSparkles(containerEl, glowColor) {
 
 function checkGameStatus(countdownExpired = false) {
   const cur = State.cur;
+  if (cur.tutorial) return; // 튜토리얼 판은 클리어 기록/실패 판정 없음
   const isWon = cur.tubes.every(t => t.length === 0 || (t.length === CAPACITY && t.every(c => c === t[0])));
 
   if (isWon) {
@@ -1888,6 +2080,233 @@ function applyRescue(includeEmergencyBottle = false) {
 /* ==========================================================================
    초기화 바인딩
    ========================================================================== */
+/* ==========================================================================
+   첫 실행 튜토리얼
+   - 설명을 읽는 방식이 아니라 "직접 해 보는" 코치마크: 스포트라이트 + 손가락 + 말풍선
+   - 어린이 모드: 글을 몰라도 되도록 동물 친구 + 큰 손가락 + 음성 읽어주기(🔊), 한 번에 한 동작만
+   - 어른 모드: 목표 → 선택 → 붓기 → 규칙 요약 순서의 짧은 안내
+   - 언제든 건너뛰기 가능, 헤더의 ❓ 버튼으로 다시 볼 수 있음
+   ========================================================================== */
+const Tut = { active: false, step: 0, mode: "adult", fromHelp: false, timer: null };
+
+const TUT_STEPS = [
+  { type: "intro" },
+  { type: "select", target: 0, key: "tutSel1" },
+  { type: "pour", from: 0, target: 1, key: "tutPour1" },
+  { type: "info", key: "tutNice1", auto: 1800 },
+  { type: "select", target: 2, key: "tutSel2" },
+  { type: "pour", from: 2, target: 0, key: "tutPour2" },
+  { type: "outro" }
+];
+
+function tutKey(st) {
+  return (st.type === "intro" ? "tutIntro" : (st.type === "outro" ? "tutOutro" : st.key)) +
+    (Tut.mode === "kid" ? "Kid" : "Adult");
+}
+
+function maybeStartTutorial() {
+  if (Tut.active) return;
+  const key = State.mainMode === "kid" ? "kid" : "adult";
+  if (!State.tutorialDone[key]) startTutorial(false);
+}
+
+function startTutorial(fromHelp) {
+  Tut.active = true;
+  Tut.fromHelp = !!fromHelp;
+  Tut.mode = State.mainMode === "kid" ? "kid" : "adult";
+
+  // 연습 판: 2번 붓기로 2병이 완성되는 아주 작은 보드 (기믹/이동 제한/기록 없음)
+  State.cur = {
+    level: 0, tutorial: true,
+    tubes: [[0, 0, 0, 1], [1, 1, 1], [0]],
+    moves: 0, optimalMoves: 2, limitMoves: 0, isUnlimited: true,
+    gimmicks: { blindTubes: {}, lockedTubes: {}, countdownTubes: {}, frozenLayers: {} },
+    history: []
+  };
+  selectedTubeIdx = null;
+  isBusy = false;
+  showView("view-game", false);
+  renderGame();
+  tutShow(0);
+}
+
+function endTutorial(markDone, goPlay) {
+  clearTimeout(Tut.timer);
+  Tut.active = false;
+  $("tutorial-layer").hidden = true;
+  document.body.classList.remove("tutorial-on", "tut-kid");
+  try { if ("speechSynthesis" in window) speechSynthesis.cancel(); } catch (e) {}
+
+  selectedTubeIdx = null;
+  isBusy = false;
+  State.cur = null;
+  if (markDone) { State.tutorialDone[Tut.mode] = true; }
+  saveState();
+
+  if (goPlay && !Tut.fromHelp) {
+    const cleared = getClearedData();
+    let cs = 1;
+    while (cs <= TOTAL_STAGES && cleared[cs]) cs++;
+    startGame(Math.min(cs, TOTAL_STAGES));
+  } else {
+    showHome();
+  }
+}
+
+function tutShow(i) {
+  clearTimeout(Tut.timer);
+  Tut.step = i;
+  const st = TUT_STEPS[i];
+  const kid = Tut.mode === "kid";
+
+  $("tutorial-layer").hidden = false;
+  document.body.classList.add("tutorial-on");
+  document.body.classList.toggle("tut-kid", kid);
+
+  $("tut-buddy").textContent = State.animal;
+  $("tut-text").innerHTML = t(tutKey(st));
+  $("tut-skip").textContent = t("tutSkip");
+  $("tut-speak").hidden = !kid;
+
+  // 부가 영역: 처음엔 언어 선택, 어른 모드 마지막엔 규칙 요약
+  const extra = $("tut-extra");
+  extra.innerHTML = "";
+  if (st.type === "intro") {
+    const row = document.createElement("div");
+    row.className = "tut-lang-row";
+    [["ko", "한국어"], ["ja", "日本語"], ["en", "English"]].forEach(([code, label]) => {
+      const b = document.createElement("button");
+      b.className = "tut-lang-chip" + (State.lang === code ? " active" : "");
+      b.textContent = label;
+      b.onclick = () => {
+        State.lang = code; saveState(); playSound("click");
+        applyLanguage(); renderGame(); tutShow(Tut.step);
+      };
+      row.appendChild(b);
+    });
+    extra.appendChild(row);
+  } else if (st.type === "outro" && !kid) {
+    const ul = document.createElement("ul");
+    ul.className = "tut-rules";
+    ["tutRule1", "tutRule2", "tutRule3"].forEach(k => {
+      const li = document.createElement("li");
+      li.textContent = t(k);
+      ul.appendChild(li);
+    });
+    extra.appendChild(ul);
+  }
+
+  // 시작/완료 버튼 (연습 단계에서는 직접 병을 눌러야 함)
+  const next = $("tut-next");
+  next.hidden = !(st.type === "intro" || st.type === "outro");
+  next.textContent = st.type === "intro" ? t("tutStart") : t("tutPlay");
+
+  // 진행 점
+  $("tut-dots").innerHTML = TUT_STEPS.map((_, k) =>
+    `<span class="${k === i ? "on" : (k < i ? "done" : "")}"></span>`).join("");
+
+  // 카드 팝 모션
+  const card = $("tut-card");
+  card.classList.remove("pop", "shake");
+  void card.offsetWidth;
+  card.classList.add("pop");
+
+  tutLayout();
+  setTimeout(tutLayout, 450); // 병 모션이 끝난 뒤 위치 재보정
+
+  if (st.type === "outro") {
+    document.querySelectorAll(".flask").forEach((f, k) => setTimeout(() => spawnSparkles(f, "#fff"), k * 160));
+  }
+  if (st.type === "info") {
+    Tut.timer = setTimeout(() => { if (Tut.active && Tut.step === i) tutShow(i + 1); }, st.auto);
+  }
+  if (st.type === "info" || st.type === "outro") {
+    if (navigator.vibrate) navigator.vibrate([30, 40, 50]);
+  }
+  if (kid) tutSpeak();
+}
+
+// 스포트라이트와 손가락을 안내할 병 위에 배치
+function tutLayout() {
+  if (!Tut.active) return;
+  const st = TUT_STEPS[Tut.step];
+  const isAct = (st.type === "select" || st.type === "pour");
+  const spot = $("tut-spot"), finger = $("tut-finger");
+
+  $("tut-dim").hidden = !(st.type === "intro" || st.type === "outro");
+  spot.hidden = !isAct;
+  finger.hidden = !isAct;
+  if (!isAct) return;
+
+  const el = $("flask-" + st.target);
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+
+  spot.style.left = (r.left - 10) + "px";
+  spot.style.top = (r.top - 14) + "px";
+  spot.style.width = (r.width + 20) + "px";
+  spot.style.height = (r.height + 28) + "px";
+
+  // 병 아래에 👆, 공간이 없으면 병 위에 👇
+  const fingerH = Tut.mode === "kid" ? 70 : 52;
+  const below = (r.bottom + fingerH + 80) < window.innerHeight;
+  finger.textContent = below ? "👆" : "👇";
+  finger.style.left = (r.left + r.width / 2) + "px";
+  finger.style.top = (below ? r.bottom + 8 : r.top - fingerH - 8) + "px";
+}
+
+function tutAllowClick(idx) {
+  const st = TUT_STEPS[Tut.step];
+  if (st.type === "select") return idx === st.target && selectedTubeIdx === null;
+  if (st.type === "pour") return idx === st.target && selectedTubeIdx === st.from;
+  return false;
+}
+
+function tutNudge() {
+  playSound("click");
+  const card = $("tut-card");
+  card.classList.remove("pop", "shake");
+  void card.offsetWidth;
+  card.classList.add("shake");
+}
+
+function tutAdvanceIf(type) {
+  if (!Tut.active) return;
+  if (TUT_STEPS[Tut.step].type === type) tutShow(Tut.step + 1);
+}
+
+function tutSpeak() {
+  if (State.mute || !("speechSynthesis" in window)) return;
+  try {
+    const raw = t(tutKey(TUT_STEPS[Tut.step])).replace(/<[^>]+>/g, " ");
+    const emoji = new RegExp("[\\p{Extended_Pictographic}\\uFE0F\\u200D①②③]", "gu");
+    const u = new SpeechSynthesisUtterance(raw.replace(emoji, "").trim());
+    u.lang = { ko: "ko-KR", ja: "ja-JP", en: "en-US" }[State.lang] || "ko-KR";
+    u.rate = 0.82;   // 아이가 따라 들을 수 있게 천천히
+    u.pitch = 1.25;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+function initTutorialUI() {
+  $("tut-next").onclick = () => {
+    playSound("click");
+    if (!Tut.active) return;
+    const st = TUT_STEPS[Tut.step];
+    if (st.type === "intro") tutShow(1);
+    else if (st.type === "outro") endTutorial(true, true);
+  };
+  $("tut-skip").onclick = () => { playSound("click"); endTutorial(true, false); };
+  $("tut-speak").onclick = () => { playSound("click"); tutSpeak(); };
+  $("help-btn").onclick = () => {
+    if (Tut.active || currentView === "view-game") return;
+    playSound("click");
+    startTutorial(true);
+  };
+  window.addEventListener("resize", tutLayout);
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   $("global-back-btn").onclick = handleBack;
 
@@ -1928,7 +2347,7 @@ window.addEventListener("DOMContentLoaded", () => {
     saveState();
     playSound("click");
     applyLanguage();
-    setTimeout(() => showHome(), 180);
+    setTimeout(() => { showHome(); maybeStartTutorial(); }, 180);
   };
 
   $("card-mode-adult").onclick = (e) => {
@@ -1937,7 +2356,7 @@ window.addEventListener("DOMContentLoaded", () => {
     saveState();
     playSound("click");
     applyLanguage();
-    setTimeout(() => showHome(), 180);
+    setTimeout(() => { showHome(); maybeStartTutorial(); }, 180);
   };
 
   document.querySelectorAll(".tier-box").forEach(box => {
@@ -1948,7 +2367,7 @@ window.addEventListener("DOMContentLoaded", () => {
       saveState();
       playSound("click");
       applyLanguage();
-      setTimeout(() => showHome(), 180);
+      setTimeout(() => { showHome(); maybeStartTutorial(); }, 180);
     };
   });
 
@@ -2025,8 +2444,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  initTutorialUI();
   applyLanguage();
   showHome();
+  maybeStartTutorial(); // 처음 실행이면 튜토리얼 시작
 });
 </script>
 </body>
